@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "chestprotection",
+	"version": "${version}",
+	"name": "Chest Protection",
+	"description": "Lock your chests!",
+	"authors": [
+		"FBanna"
+	],
+	"license": "CC0-1.0",
+	"environment": "server",
+	"entrypoints": {
+		"main": [
+			"fbanna.chestprotection.ChestProtection"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"mixins": [
+		"chestprotection.mixin.json"
+	]
+
+}

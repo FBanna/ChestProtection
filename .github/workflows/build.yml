@@ -1,0 +1,81 @@
+# Automatically build the project and run any configured tests for every push
+# and submitted pull request. This can help catch issues that only occur on
+# certain platforms or Java versions, and provides a first line of defence
+# against bad commits.
+
+name: build
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+\+1.21'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        # Use these Java versions
+        java: [
+          21,    # Current Java LTS
+        ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+      - name: validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v2
+      - name: setup jdk ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'microsoft'
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Export Tag
+        run: |
+          echo "RELEASE_TAG=${{ github.ref_name }}" >> "$GITHUB_ENV"
+
+      - name: build
+        run: ./gradlew build
+      - name: capture build artifacts
+        if: ${{ matrix.java == '21' }} # Only upload artifacts built from latest java
+        uses: actions/upload-artifact@v4
+        with:
+          name: Artifacts
+          path: build/libs/
+  release-artifacts:
+    permissions:
+      contents: write
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: artifacts/
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          #tag: "test"
+          #tag: ${{ env.TAG }}
+          tag: ${{ github.ref_name }}
+          artifacts: "artifacts/*.jar"
+          prerelease: false
+          body: "pre release, do not use"
+
+      - name: Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          # Only include this section if you wish to publish
+          # your assets on Modrinth.
+          #tag: ${{ github.ref_name }}
+
+          modrinth-id: fEwhuw0Y
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          loaders: fabric
+          version-type: release
+          files: |
+            artifacts/!(*-@(dev|sources|javadoc)).jar
