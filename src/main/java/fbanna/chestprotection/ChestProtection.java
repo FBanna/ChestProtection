@@ -8,7 +8,9 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,8 @@ public class ChestProtection implements ModInitializer {
 
 		LOGGER.info("Now protecting your chests!");
 
+		// CHECK FOR BLOCK USE
+
 		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
 			
 
@@ -31,6 +35,7 @@ public class ChestProtection implements ModInitializer {
 
 				if(book.chestStatus == CheckChest.status.LOCK){
 					if(!Objects.equals(book.author, player.getName().getString())){
+						player.sendMessage(Text.translatable("Chest is locked!").formatted(Formatting.RED), true);
 						return ActionResult.FAIL;
 					}
 				} else if (book.chestStatus == CheckChest.status.SELL) {
@@ -57,6 +62,7 @@ public class ChestProtection implements ModInitializer {
 
 				if(book.chestStatus != CheckChest.status.CLEAR){
 					if(!Objects.equals(book.author, player.getName().getString())){
+						player.sendMessage(Text.translatable("Chest is locked!").formatted(Formatting.RED), true);
 						return false;
 					}
 				}
