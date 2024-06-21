@@ -35,7 +35,7 @@ public class ChestProtection implements ModInitializer {
 
 				if(book.chestStatus == CheckChest.status.LOCK){
 					if(!Objects.equals(book.author, player.getName().getString())){
-						player.sendMessage(Text.translatable("Chest is locked!").formatted(Formatting.RED), true);
+						player.sendMessage(Text.translatable("Chest is locked by %s!".formatted(book.author)).formatted(Formatting.RED), true);
 						return ActionResult.FAIL;
 					}
 				} else if (book.chestStatus == CheckChest.status.SELL) {
@@ -62,7 +62,7 @@ public class ChestProtection implements ModInitializer {
 
 				if(book.chestStatus != CheckChest.status.CLEAR){
 					if(!Objects.equals(book.author, player.getName().getString())){
-						player.sendMessage(Text.translatable("Chest is locked!").formatted(Formatting.RED), true);
+						player.sendMessage(Text.translatable("Chest is locked by %s!".formatted(book.author)).formatted(Formatting.RED), true);
 						return false;
 					}
 				}
