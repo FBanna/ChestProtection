@@ -1,15 +1,24 @@
 package fbanna.chestprotection.check;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
+import fbanna.chestprotection.ChestProtection;
+import fbanna.chestprotection.trade.TradeInventory;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.component.type.WritableBookContentComponent;
 import net.minecraft.component.type.WrittenBookContentComponent;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.WrittenBookItem;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.RawFilteredPair;
 import net.minecraft.text.Text;
@@ -17,13 +26,16 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class CheckChest {
 
     public enum status{
         CLEAR,
+        ERROR,
         SELL,
         LOCK
     }
@@ -53,27 +65,26 @@ public class CheckChest {
             this.stack = this.chestInventory.getStack(0);
 
 
-
+            // IF ITS A BOOK
             if(this.stack.getItem() instanceof WrittenBookItem){
 
                 WrittenBookContentComponent book;
-                //ComponentMap test = stack.getComponents();
-
-                //WrittenBookContentComponent book = stack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT);
 
                 book = this.stack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT);
 
 
-
+                // IF ITS A LOCK
                 if(Objects.equals(book.title().raw(), "LOCK")) {
 
                     this.chestStatus = status.LOCK;
 
                     this.author = book.author();
 
+                // IF ITS A SELL
+
                 } else if (Objects.equals(book.title().raw(), "SELL")) {
 
-                    this.chestStatus = status.SELL;
+                    this.chestStatus = status.ERROR;
 
                     // minecraft:diamond-64->minecraft:stick-1
 
@@ -81,12 +92,31 @@ public class CheckChest {
 
                     List<RawFilteredPair<Text>> pages = book.pages();
 
+                    // CHECK SIZE
                     if(pages.size() == 2){
+
+                        // GET STRINGS
 
                         String page1 = pages.get(0).raw().getString();
                         String page2 = pages.get(1).raw().getString();
 
+                        //try {
+                        JsonElement element1 = JsonParser.parseString(page1);
+                        DataResult<ItemStack> resultPage1 = ItemStack.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element1);
 
+                        JsonElement element2 = JsonParser.parseString(page2);
+                        DataResult<ItemStack> resultPage2 = ItemStack.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element2);
+
+                        if(resultPage1.isSuccess() && resultPage2.isSuccess()) {
+                            this.cost = resultPage1.getOrThrow();
+                            this.product = resultPage2.getOrThrow();
+                            this.chestStatus = status.SELL;
+                        }
+
+
+
+
+                        /*
                         try {
                             String[] tempCost = page1.split("-");
                             String[] tempProduct = page2.split("-");
@@ -111,7 +141,7 @@ public class CheckChest {
 
                         } catch (Exception e){
                             this.chestStatus = status.CLEAR;
-                        }
+                        }*/
                     }
 
 
@@ -152,7 +182,9 @@ public class CheckChest {
         }
     }
 
-    public boolean isStock(ItemStack stack) {
+    public boolean isStock(ItemStack product) {
+        /*
+
         int count = stack.getCount();
 
         int total = this.chestInventory.count(stack.getItem());
@@ -161,7 +193,77 @@ public class CheckChest {
             return true;
         } else {
             return false;
+        }*/
+
+        int total = 0;
+        ItemStack stack;
+
+        for(int i = 0; i < this.chestInventory.size(); i++){
+            stack = this.chestInventory.getStack(i);
+            if(TradeInventory.ItemsEqual(stack, product)) {
+                total += stack.getCount();
+            }
+
         }
+        /*} else if (this.getStack(index).getItem() == this.trade.cost.getItem()){
+            return index;
+        }*/
+
+        if (product.getCount() <= total){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void saveTrade(ItemStack[] stacks) {
+        List<RawFilteredPair<Text>> newPages = new ArrayList<>();
+        WrittenBookContentComponent book = this.stack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT);
+
+        /*
+
+        //ChestProtection.LOGGER.info(stacks[1].encode(world.getRegistryManager()).toString());
+
+        DataResult<JsonElement> result1 = ItemStack.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), stacks[1]);
+
+        //if (result1.isSuccess()) {
+        ChestProtection.LOGGER.info("SUCCESS " + result1.getPartialOrThrow().toString());*/
+
+        //}
+
+        int i = 0;
+
+        for (ItemStack transactionStack: stacks) {
+            if (transactionStack == null || transactionStack.isEmpty()) {
+
+                if(book.pages().size()>=i){
+                    newPages.add(book.pages().get(i));
+                } else {
+                    newPages.add(RawFilteredPair.of(Text.empty()));
+                }
+
+            } else {
+                DataResult<JsonElement> result = ItemStack.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), transactionStack);
+                JsonElement jsonElement = result.getOrThrow();
+                String json = jsonElement.toString();
+                newPages.add(RawFilteredPair.of(Text.of(json)));
+
+            }
+
+
+            i++;
+        }
+
+        WrittenBookContentComponent book1 = new WrittenBookContentComponent(
+                book.title(),
+                book.author(),
+                book.generation(),
+                newPages,
+                book.resolved()
+                );
+
+        this.stack.set(DataComponentTypes.WRITTEN_BOOK_CONTENT, book1);
+
     }
 
     public void setProfitInventory(SimpleInventory inventory) {

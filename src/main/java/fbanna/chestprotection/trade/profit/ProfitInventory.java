@@ -16,7 +16,8 @@ public class ProfitInventory extends SimpleInventory {
 
         for(int i = 0; i < size; i++){
 
-            this.heldStacks.set(i, new ItemStack(this.trade.cost.getItem(), this.trade.profitInventory[i]));
+            //this.heldStacks.set(i, new ItemStack(this.trade.cost.getItem(), this.trade.profitInventory[i]));
+            this.heldStacks.set(i, this.trade.cost.copyWithCount(this.trade.profitInventory[i]));
         }
 
     }

@@ -3,6 +3,7 @@ package fbanna.chestprotection;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.check.CheckChest;
 import fbanna.chestprotection.trade.TradeScreen;
+import fbanna.chestprotection.trade.setup.SetupScreen;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -45,6 +46,17 @@ public class ChestProtection implements ModInitializer {
 
 					return ActionResult.FAIL;
 
+				} else if (book.chestStatus == CheckChest.status.ERROR) {
+
+					if(Objects.equals(book.author, player.getName().getString())) {
+						SimpleGui gui = new SetupScreen((ServerPlayerEntity) player, book);
+						gui.open();
+					} else {
+						player.sendMessage(Text.translatable("Shop is in an error state. Contact %s!".formatted(book.author)).formatted(Formatting.RED), true);
+					}
+
+
+					return ActionResult.FAIL;
 				}
 
 			}
