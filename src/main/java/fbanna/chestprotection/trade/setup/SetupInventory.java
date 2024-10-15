@@ -24,6 +24,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
+import java.awt.*;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -73,7 +74,7 @@ public class SetupInventory extends SimpleInventory {
             pos++;
 
 
-            for (ComponentType type: stack.getComponents().getTypes()) {
+            for (ComponentType<?> type: stack.getComponents().getTypes()) {
                 ChestProtection.LOGGER.info(type.toString(), pos);
 
                 GuiElementBuilder component = new GuiElementBuilder()
@@ -102,20 +103,27 @@ public class SetupInventory extends SimpleInventory {
 
     public void dropAll() {
         ItemStack[] stacks = new ItemStack[2];
+
+        boolean noItem = false;
         for (int slot = 0; slot < 2; slot++) {
             ChestProtection.LOGGER.info(String.valueOf(slot));
             ItemStack stack = this.getStack(slot).copy();
 
             int pos = slot * 27;
 
-            /*if(Objects.requireNonNull(screen.getSlot(pos)).getItemStack().getItem().equals(Items.RED_WOOL)){
+            if(Objects.requireNonNull(screen.getSlot(pos)).getItemStack().getItem().equals(Items.RED_WOOL)){
                 stack = stack.withItem(Items.AIR);
-            }*/
+                noItem = true;
+            }
 
             pos++;
 
 
-            for (ComponentType type: this.getStack(slot).getComponents().getTypes()) {
+            for (ComponentType<?> type: this.getStack(slot).getComponents().getTypes()) {
+
+                if(type.equals(DataComponentTypes.CONTAINER)) {
+
+                }
 
                 if(Objects.requireNonNull(screen.getSlot(pos)).getItemStack().getItem().equals(Items.RED_WOOL)) {
                     stack.remove(type);

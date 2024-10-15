@@ -55,7 +55,7 @@ public class TradeInventory extends SimpleInventory {
     }
 
     private static boolean ItemComponentEquals(ItemStack original, Component component) {
-        for (Component type: original.getComponents()) {
+        for (Component<?> type: original.getComponents()) {
             if(type.equals(component)) {
                 return true;
             }
@@ -68,7 +68,7 @@ public class TradeInventory extends SimpleInventory {
         ItemStack stack = stack1ORIGINAL.copy();
         ItemStack tradeStack = tradeStack1ORIGINAL.copy();
 
-        for (Component type: tradeStack.getComponents()) {
+        for (Component<?> type: tradeStack.getComponents()) {
             //ChestProtection.LOGGER.info(type.toString());
 
             if(!ItemComponentEquals(stack, type)){

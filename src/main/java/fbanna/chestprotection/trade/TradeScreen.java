@@ -10,6 +10,7 @@ import fbanna.chestprotection.trade.profit.ProfitScreen;
 import fbanna.chestprotection.trade.setup.SetupScreen;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
+import net.minecraft.component.Component;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.WrittenBookContentComponent;
@@ -81,8 +82,8 @@ public class TradeScreen extends SimpleGui {
         ComponentMap costComponents = this.trade.cost.copy().getComponents();
 
 
-        for(ComponentType component: costComponents.getTypes()) {
-            cost.setComponent(component, this.trade.cost.getComponents().get(component));
+        for(ComponentType<?> component: costComponents.getTypes()) {
+            cost.setComponent((ComponentType) component, this.trade.cost.getComponents().get(component));
         }
         cost.setLore(List.of(Text.of(String.valueOf(this.trade.cost.getCount()))));
 
@@ -93,8 +94,8 @@ public class TradeScreen extends SimpleGui {
 
         ComponentMap productComponents = this.trade.product.getComponents();
 
-        for(ComponentType component: productComponents.getTypes()) {
-            product.setComponent(component, this.trade.product.getComponents().get(component));
+        for(ComponentType<?> component: productComponents.getTypes()) {
+            product.setComponent((ComponentType) component, this.trade.product.getComponents().get(component));
         }
         product.setLore(List.of(Text.of(String.valueOf(this.trade.product.getCount()))));
 
