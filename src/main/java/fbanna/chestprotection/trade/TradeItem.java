@@ -5,20 +5,24 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class SaveItem {
+public class TradeItem {
 
     private final boolean isItem;
     private ItemStack stack;
 
-    public static final Codec<SaveItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.BOOL.fieldOf("isItem").forGetter(SaveItem::getIsItem),
-            ItemStack.CODEC.fieldOf("stack").forGetter(SaveItem::getStack)
-    ).apply(instance, SaveItem::new));
+    public static final Codec<TradeItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.BOOL.fieldOf("isItem").forGetter(TradeItem::getIsItem),
+            ItemStack.CODEC.fieldOf("stack").forGetter(TradeItem::getStack)
+    ).apply(instance, TradeItem::new));
 
-    public SaveItem(boolean isItem, ItemStack stack){
+    public TradeItem(boolean isItem, ItemStack stack){
         this.isItem = isItem;
         this.stack = stack;
 
+    }
+
+    public TradeItem copy(){
+        return new TradeItem(this.isItem, this.stack.copy());
     }
 
     public void setItem(Item item){

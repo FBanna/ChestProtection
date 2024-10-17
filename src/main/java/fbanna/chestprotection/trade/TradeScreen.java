@@ -1,22 +1,12 @@
 package fbanna.chestprotection.trade;
 
-
-import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
 import fbanna.chestprotection.trade.profit.ProfitScreen;
 import fbanna.chestprotection.trade.setup.SetupScreen;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.component.Component;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.ComponentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.WrittenBookContentComponent;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
@@ -26,7 +16,6 @@ import net.minecraft.text.Text;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class TradeScreen extends SimpleGui {
 
@@ -71,9 +60,10 @@ public class TradeScreen extends SimpleGui {
             );
         }
 
-        ChestProtection.LOGGER.info(String.valueOf(this.trade.cost) + String.valueOf(this.trade.product));
+        //ChestProtection.LOGGER.info(String.valueOf(this.trade.cost) + String.valueOf(this.trade.product));
 
-        ItemStack[] tradeItemsOriginal = {this.trade.cost, this.trade.product};
+        //ItemStack[] tradeItemsOriginal = {this.trade.cost, this.trade.product};
+
         GuiElementBuilder[] tradeItems = new GuiElementBuilder[2];
 
         /*tradeItems[0] = new GuiElementBuilder()
@@ -84,7 +74,7 @@ public class TradeScreen extends SimpleGui {
 
         for (int i = 0; i < tradeItems.length; i++) {
 
-            tradeItems[i] = new GuiElementBuilder().setItem(tradeItemsOriginal[i].getItem());;
+            tradeItems[i] = new GuiElementBuilder().setItem(this.trade.tradeItems.get(i).getStack().getItem());;
 
             /*if(tradeItemsOriginal[i].getItem() == Items.STRUCTURE_VOID){
                 for (ComponentType<?> type: tradeItemsOriginal[i].copy().getComponents().getTypes()) {
@@ -98,13 +88,13 @@ public class TradeScreen extends SimpleGui {
             } else {*/
 
 
-            ComponentMap components = tradeItemsOriginal[i].copy().getComponents();
+            ComponentMap components = this.trade.tradeItems.get(i).getStack().copy().getComponents();
 
             for(ComponentType<?> component: components.getTypes()) {
-                tradeItems[i].setComponent((ComponentType) component, tradeItemsOriginal[i].getComponents().get(component));
+                tradeItems[i].setComponent((ComponentType) component, this.trade.tradeItems.get(i).getStack().getComponents().get(component));
             }
 
-            tradeItems[i].setLore(List.of(Text.of(String.valueOf(tradeItemsOriginal[i].getCount()))));
+            tradeItems[i].setLore(List.of(Text.of(String.valueOf(this.trade.tradeItems.get(i).getStack().getCount()))));
 
 
         }
@@ -177,13 +167,13 @@ public class TradeScreen extends SimpleGui {
             this.accept.setItem(Items.BARRIER)
                     .setName(Text.of("Error! contact " + this.trade.author));
 
-        } else*/ if (!this.trade.isStock(this.trade.product)) {
+        } else*/ if (!this.trade.isStock(this.trade.tradeItems.getProduct())) {
 
             this.accept.setItem(Items.BARRIER)
                     .setName(Text.of("No stock! contact " + this.trade.author));
 
 
-        } else if (!this.trade.canFit(this.trade.cost)) {
+        } else if (!this.trade.canFit(this.trade.tradeItems.getCostStack())) {
 
             this.accept.setItem(Items.BARRIER)
                     .setName(Text.of("Profit full! contact " + this.trade.author));

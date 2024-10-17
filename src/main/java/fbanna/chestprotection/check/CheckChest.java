@@ -5,8 +5,9 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.trade.SaveItem;
+import fbanna.chestprotection.trade.TradeItem;
 import fbanna.chestprotection.trade.TradeInventory;
+import fbanna.chestprotection.trade.TradeItemList;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.component.ComponentType;
@@ -19,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.WrittenBookItem;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.RawFilteredPair;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -39,8 +41,9 @@ public class CheckChest {
 
     public status chestStatus = status.CLEAR;
     public String author;
-    public ItemStack cost;
-    public ItemStack product;
+    //public ItemStack cost;
+    //public ItemStack product;
+    public TradeItemList tradeItems;
     public Inventory chestInventory;
     public int[] profitInventory = new int[54];
     public World world;
@@ -116,16 +119,16 @@ public class CheckChest {
 
                         String[] pageList = {pages.get(0).raw().getString(), pages.get(1).raw().getString()};
                         //ItemStack[] out = new ItemStack[2];
-                        SaveItem[] out = new SaveItem[2];
+                        TradeItem[] out = new TradeItem[2];
                         boolean success = true;
 
 
                         for (int i = 0; i < 2; i++){
-                            SaveItem saveItem;
+                            TradeItem saveItem;
                             JsonElement element = JsonParser.parseString(pageList[i]);
 
                             //DataResult<ItemStack> result = ItemStack.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
-                            DataResult<SaveItem> result = SaveItem.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+                            DataResult<TradeItem> result = TradeItem.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
 
                             if(result.isSuccess()){
                                 saveItem = result.getOrThrow();
@@ -153,8 +156,9 @@ public class CheckChest {
                         }
 
                         if(success){
-                            this.cost = out[0].getStack();
-                            this.product = out[1].getStack();
+                            //this.cost = out[0].getStack();
+                            //this.product = out[1].getStack();
+                            this.tradeItems = new TradeItemList(out);
                             this.chestStatus = status.SELL;
                         }
 
@@ -209,7 +213,12 @@ public class CheckChest {
 
                                 NbtCompound nbt = data.copyNbt();
 
-
+                                if(nbt.get("profitInventory").getType()==NbtElement.INT_ARRAY_TYPE) {
+                                    ChestProtection.LOGGER.info("OLD BOOK CONVERTING!");
+                                    this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
+                                        currentNbt.put
+                                    }))
+                                }
 
 
                                 this.profitInventory = nbt.getIntArray("profitInventory");
@@ -229,7 +238,7 @@ public class CheckChest {
         }
     }
 
-    public boolean isStock(ItemStack product) {
+    public boolean isStock(TradeItem product) {
         /*
 
         int count = stack.getCount();
@@ -256,7 +265,7 @@ public class CheckChest {
             return index;
         }*/
 
-        if (product.getCount() <= total){
+        if (product.getStack().getCount() <= total){
             return true;
         } else {
             return false;
@@ -291,8 +300,8 @@ public class CheckChest {
 
             } else {
                 ChestProtection.LOGGER.info("isItem = " + isItem[i]);
-                SaveItem saveItemCodec = new SaveItem(isItem[i], transactionStack);
-                DataResult<JsonElement> result = SaveItem.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), saveItemCodec);
+                TradeItem saveItemCodec = new TradeItem(isItem[i], transactionStack);
+                DataResult<JsonElement> result = TradeItem.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), saveItemCodec);
                 //DataResult<JsonElement> result = ItemStack.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), transactionStack);
                 JsonElement jsonElement = result.getOrThrow();
                 String json = jsonElement.toString();
@@ -321,7 +330,8 @@ public class CheckChest {
         int[] arrayInventory = new int[inventory.size()];
 
         for(int i = 0; i < inventory.size(); i++){
-            if (inventory.getStack(i).getItem() == this.cost.getItem()){
+            //if (inventory.getStack(i).getItem() == this.cost.getItem()){
+            if (inventory.getStack(i).getItem() == this.tradeItems.getCostStack().getItem()) {
                 arrayInventory[i] = inventory.getStack(i).getCount();
             }
         }
