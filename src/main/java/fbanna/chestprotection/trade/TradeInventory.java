@@ -175,11 +175,11 @@ public class TradeInventory extends SimpleInventory {
                     stack = this.trade.chestInventory.getStack(slot);
                     if(productCountdown >= stack.getCount()){
                         this.trade.chestInventory.setStack(slot, Items.AIR.getDefaultStack());
-                        //ChestProtection.LOGGER.info("1removed item with air from "+ slot);
+                        ChestProtection.LOGGER.info("1removed item with air from "+ slot);
                         productCountdown -= stack.getCount();
                     } else {
                         this.trade.chestInventory.setStack(slot, this.trade.product.copyWithCount(stack.getCount() - productCountdown));
-                        //ChestProtection.LOGGER.info("2reduced item count from " + stack.getCount() + " to " + (stack.getCount() - productCountdown));
+                        ChestProtection.LOGGER.info("2reduced item count from " + stack.getCount() + " to " + (stack.getCount() - productCountdown));
                         //this.trade.chestInventory.setStack(slot, new ItemStack(this.trade.product.getItem(), stack.getCount() - productCountdown));
                         productCountdown = 0;
                     }
@@ -205,12 +205,12 @@ public class TradeInventory extends SimpleInventory {
                     if(productCountdown > this.trade.product.getMaxCount()){
                         productCountdown -= this.trade.product.getMaxCount();
                         this.setStack(i, this.trade.product.copyWithCount(this.trade.product.getMaxCount()));
-                        //ChestProtection.LOGGER.info("1added " + this.trade.product.getMaxCount() + " to " + i);
+                        ChestProtection.LOGGER.info("1added " + this.trade.product.getMaxCount() + " to " + i);
                         //this.setStack(i, new ItemStack(this.trade.product.getItem(), this.trade.product.getMaxCount()));
                     } else {
                         //ChestProtection.LOGGER.info("RUNN" + productCountdown);
                         this.setStack(i, this.trade.product.copyWithCount(productCountdown));
-                        //ChestProtection.LOGGER.info("2added " + productCountdown + " to " + i);
+                        ChestProtection.LOGGER.info("2added " + productCountdown + " to " + i);
                         //this.setStack(i, new ItemStack(this.trade.product.getItem(), productCountdown));
                         productCountdown = 0;
 
@@ -220,12 +220,12 @@ public class TradeInventory extends SimpleInventory {
                     if (productCountdown + stack.getCount() <= this.trade.product.getMaxCount()){
                         this.setStack(i, this.trade.product.copyWithCount(productCountdown + stack.getCount()));
 
-                        //ChestProtection.LOGGER.info("3added " + (productCountdown + stack.getCount()) + " to " + i);
+                        ChestProtection.LOGGER.info("3added " + (productCountdown + stack.getCount()) + " to " + i);
                         //this.setStack(i, new ItemStack(this.trade.product.getItem(), productCountdown + stack.getCount()));
                         productCountdown = 0;
                     } else {
                         this.setStack(i, this.trade.product.copyWithCount(this.trade.product.getMaxCount()));
-                        //ChestProtection.LOGGER.info("4added " + (this.trade.product.getMaxCount()) + " to " + i);
+                        ChestProtection.LOGGER.info("4added " + (this.trade.product.getMaxCount()) + " to " + i);
                         //this.setStack(i, new ItemStack(this.trade.product.getItem(), this.trade.product.getMaxCount()));
                         productCountdown -= (this.trade.product.getMaxCount() - stack.getCount());
                     }

@@ -5,31 +5,28 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import fbanna.chestprotection.ChestProtection;
+import fbanna.chestprotection.trade.SaveItem;
 import fbanna.chestprotection.trade.TradeInventory;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
+import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.component.type.WritableBookContentComponent;
 import net.minecraft.component.type.WrittenBookContentComponent;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.WrittenBookItem;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.registry.Registries;
 import net.minecraft.text.RawFilteredPair;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class CheckChest {
 
@@ -95,6 +92,8 @@ public class CheckChest {
                     // CHECK SIZE
                     if(pages.size() == 2){
 
+                        /*
+
                         // GET STRINGS
 
                         String page1 = pages.get(0).raw().getString();
@@ -111,7 +110,55 @@ public class CheckChest {
                             this.cost = resultPage1.getOrThrow();
                             this.product = resultPage2.getOrThrow();
                             this.chestStatus = status.SELL;
+                        }*/
+
+
+
+                        String[] pageList = {pages.get(0).raw().getString(), pages.get(1).raw().getString()};
+                        //ItemStack[] out = new ItemStack[2];
+                        SaveItem[] out = new SaveItem[2];
+                        boolean success = true;
+
+
+                        for (int i = 0; i < 2; i++){
+                            SaveItem saveItem;
+                            JsonElement element = JsonParser.parseString(pageList[i]);
+
+                            //DataResult<ItemStack> result = ItemStack.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+                            DataResult<SaveItem> result = SaveItem.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+
+                            if(result.isSuccess()){
+                                saveItem = result.getOrThrow();
+
+                            } else {
+                                ChestProtection.LOGGER.info("Error in parsing, when someone opened a chest! ChestProtection");
+                                success = false;
+                                break;
+                            }
+
+                            if(!saveItem.getIsItem()) {
+                                for (ComponentType<?> type : saveItem.getStack().copy().getComponents().getTypes()) {
+
+
+                                    // ADD MORE DEFAULTS
+                                    if (type.equals(DataComponentTypes.CONTAINER)) {
+                                        saveItem.setItem(Items.SHULKER_BOX);
+                                        ChestProtection.LOGGER.info(String.valueOf(saveItem.getStack()));
+                                        //item = item.copyComponentsToNewStack(Items.SHULKER_BOX, item.getCount());
+                                    }
+                                }
+                            }
+
+                            out[i] = saveItem;
                         }
+
+                        if(success){
+                            this.cost = out[0].getStack();
+                            this.product = out[1].getStack();
+                            this.chestStatus = status.SELL;
+                        }
+
+
 
 
 
@@ -216,7 +263,7 @@ public class CheckChest {
         }
     }
 
-    public void saveTrade(ItemStack[] stacks) {
+    public void saveTrade(boolean[] isItem,ItemStack[] stacks) {
         List<RawFilteredPair<Text>> newPages = new ArrayList<>();
         WrittenBookContentComponent book = this.stack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT);
 
@@ -243,7 +290,10 @@ public class CheckChest {
                 }
 
             } else {
-                DataResult<JsonElement> result = ItemStack.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), transactionStack);
+                ChestProtection.LOGGER.info("isItem = " + isItem[i]);
+                SaveItem saveItemCodec = new SaveItem(isItem[i], transactionStack);
+                DataResult<JsonElement> result = SaveItem.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), saveItemCodec);
+                //DataResult<JsonElement> result = ItemStack.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), transactionStack);
                 JsonElement jsonElement = result.getOrThrow();
                 String json = jsonElement.toString();
                 newPages.add(RawFilteredPair.of(Text.of(json)));

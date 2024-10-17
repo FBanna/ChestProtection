@@ -13,6 +13,7 @@ import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.component.Component;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.ComponentType;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.WrittenBookContentComponent;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
@@ -72,65 +73,46 @@ public class TradeScreen extends SimpleGui {
 
         ChestProtection.LOGGER.info(String.valueOf(this.trade.cost) + String.valueOf(this.trade.product));
 
+        ItemStack[] tradeItemsOriginal = {this.trade.cost, this.trade.product};
+        GuiElementBuilder[] tradeItems = new GuiElementBuilder[2];
 
-
-
-        GuiElementBuilder cost = new GuiElementBuilder()
+        /*tradeItems[0] = new GuiElementBuilder()
                 .setItem(this.trade.cost.getItem());
 
+        tradeItems[1] = new GuiElementBuilder()
+                .setItem(this.trade.product.getItem());*/
 
-        ComponentMap costComponents = this.trade.cost.copy().getComponents();
+        for (int i = 0; i < tradeItems.length; i++) {
+
+            tradeItems[i] = new GuiElementBuilder().setItem(tradeItemsOriginal[i].getItem());;
+
+            /*if(tradeItemsOriginal[i].getItem() == Items.STRUCTURE_VOID){
+                for (ComponentType<?> type: tradeItemsOriginal[i].copy().getComponents().getTypes()) {
 
 
-        for(ComponentType<?> component: costComponents.getTypes()) {
-            cost.setComponent((ComponentType) component, this.trade.cost.getComponents().get(component));
+                    // ADD MORE DEFAULTS
+                    if (type.equals(DataComponentTypes.CONTAINER)) {
+                        tradeItems[i].setItem(Items.SHULKER_BOX);
+                    }
+                }
+            } else {*/
+
+
+            ComponentMap components = tradeItemsOriginal[i].copy().getComponents();
+
+            for(ComponentType<?> component: components.getTypes()) {
+                tradeItems[i].setComponent((ComponentType) component, tradeItemsOriginal[i].getComponents().get(component));
+            }
+
+            tradeItems[i].setLore(List.of(Text.of(String.valueOf(tradeItemsOriginal[i].getCount()))));
+
+
         }
-        cost.setLore(List.of(Text.of(String.valueOf(this.trade.cost.getCount()))));
-
-
-
-        GuiElementBuilder product = new GuiElementBuilder()
-                .setItem(this.trade.product.getItem());
-
-        ComponentMap productComponents = this.trade.product.getComponents();
-
-        for(ComponentType<?> component: productComponents.getTypes()) {
-            product.setComponent((ComponentType) component, this.trade.product.getComponents().get(component));
-        }
-        product.setLore(List.of(Text.of(String.valueOf(this.trade.product.getCount()))));
-
 
         if(Objects.equals(this.trade.author, player.getName().getString())){
-
             this.setTitle(Text.of("Your shop"));
 
-            //setSlot(7, new ItemStack(Items.BLACK_STAINED_GLASS_PANE));
-            //setSlot(25, new ItemStack(Items.PAPER));
 
-            //GuiElementBuilder edit = new GuiElementBuilder()
-            //        .setItem(Items.PAPER)
-            //        .setName(Text.of("edit"))
-            //                .
-
-
-            //setSlot(16, new ItemStack(Items.BLACK_STAINED_GLASS_PANE));
-
-
-            cost.setCallback((index, clickType, action) -> {
-                //SimpleGui gui = new ProfitScreen(this.getPlayer(), this.trade);
-                SimpleGui gui = new ProfitScreen(this.getPlayer(), this.trade);
-                this.close();
-                gui.open();
-            }).glow();
-
-
-            product.setCallback((index, clickType, action) -> {
-                this.close();
-
-                //ChestBlock chestBlock = (ChestBlock) this.trade.world.getBlockState(this.trade.position).getBlock();
-                //player.openHandledScreen(chestBlock.createScreenHandlerFactory(this.trade.world.getBlockState(this.trade.position),this.trade.world, this.trade.position));
-                player.openHandledScreen((this.trade.world.getBlockState(this.trade.position)).createScreenHandlerFactory(this.trade.world, this.trade.position));
-            }).glow();
 
             GuiElementBuilder setup = new GuiElementBuilder()
                     .setItem(Items.PAPER)
@@ -143,16 +125,43 @@ public class TradeScreen extends SimpleGui {
 
             setSlot(25, setup);
 
+            tradeItems[0].setCallback((index, clickType, action) -> {
+                //SimpleGui gui = new ProfitScreen(this.getPlayer(), this.trade);
+                SimpleGui gui = new ProfitScreen(this.getPlayer(), this.trade);
+                this.close();
+                gui.open();
+            }).glow();
+
+
+            tradeItems[1].setCallback((index, clickType, action) -> {
+                this.close();
+
+                //ChestBlock chestBlock = (ChestBlock) this.trade.world.getBlockState(this.trade.position).getBlock();
+                //player.openHandledScreen(chestBlock.createScreenHandlerFactory(this.trade.world.getBlockState(this.trade.position),this.trade.world, this.trade.position));
+                player.openHandledScreen((this.trade.world.getBlockState(this.trade.position)).createScreenHandlerFactory(this.trade.world, this.trade.position));
+            }).glow();
         } else {
 
             this.setTitle(Text.of(trade.author + "'s shop"));
         }
 
 
+        //ComponentMap costComponents = this.trade.cost.copy().getComponents();
 
 
-        setSlot(8, cost);
-        setSlot(26, product);
+        //for(ComponentType<?> component: costComponents.getTypes()) {
+        //    cost.setComponent((ComponentType) component, this.trade.cost.getComponents().get(component));
+        //}
+        //cost.setLore(List.of(Text.of(String.valueOf(this.trade.cost.getCount()))));
+
+
+
+
+
+
+
+        setSlot(8, tradeItems[0]);
+        setSlot(26, tradeItems[1]);
 
         int slotNumber = 0;
 

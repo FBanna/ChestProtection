@@ -75,7 +75,7 @@ public class SetupInventory extends SimpleInventory {
 
 
             for (ComponentType<?> type: stack.getComponents().getTypes()) {
-                ChestProtection.LOGGER.info(type.toString(), pos);
+                //ChestProtection.LOGGER.info(type.toString(), pos);
 
                 GuiElementBuilder component = new GuiElementBuilder()
                         .setItem(Items.GREEN_WOOL)
@@ -102,36 +102,47 @@ public class SetupInventory extends SimpleInventory {
     }
 
     public void dropAll() {
+        boolean[] isItem = {true,true};
         ItemStack[] stacks = new ItemStack[2];
 
-        boolean noItem = false;
         for (int slot = 0; slot < 2; slot++) {
-            ChestProtection.LOGGER.info(String.valueOf(slot));
+
+
+            //ChestProtection.LOGGER.info(String.valueOf(slot));
             ItemStack stack = this.getStack(slot).copy();
 
-            int pos = slot * 27;
+            if(!stack.isEmpty()){
+                int pos = slot * 27;
 
-            if(Objects.requireNonNull(screen.getSlot(pos)).getItemStack().getItem().equals(Items.RED_WOOL)){
-                stack = stack.withItem(Items.AIR);
-                noItem = true;
-            }
+                //ChestProtection.LOGGER.info(pos +", "+ screen.getSlot(pos).getItemStack());
 
-            pos++;
+                if(Objects.requireNonNull(screen.getSlot(pos)).getItemStack().getItem().equals(Items.RED_WOOL)){
 
+                    isItem[slot] = false;
 
-            for (ComponentType<?> type: this.getStack(slot).getComponents().getTypes()) {
-
-                if(type.equals(DataComponentTypes.CONTAINER)) {
+                    /*for(ComponentType<?> type: stack.getComponents().getTypes()){
+                        stack.remove(type);
+                    }*/
 
                 }
 
-                if(Objects.requireNonNull(screen.getSlot(pos)).getItemStack().getItem().equals(Items.RED_WOOL)) {
-                    stack.remove(type);
-                }
                 pos++;
-            }
 
-            stacks[slot] = stack;
+
+                for (ComponentType<?> type: this.getStack(slot).getComponents().getTypes()) {
+
+                /*if(type.equals(DataComponentTypes.CONTAINER)) {
+
+                }*/
+
+                    if(Objects.requireNonNull(screen.getSlot(pos)).getItemStack().getItem().equals(Items.RED_WOOL)) {
+                        stack.remove(type);
+                    }
+                    pos++;
+                }
+
+                stacks[slot] = stack;
+            }
         }
 
         /*
@@ -142,8 +153,8 @@ public class SetupInventory extends SimpleInventory {
         };*/
 
 
-        ChestProtection.LOGGER.info(Arrays.toString(stacks) + stacks[0].getCount());
-        this.trade.saveTrade(stacks);
+        //ChestProtection.LOGGER.info(Arrays.toString(stacks) + stacks[0].getCount());
+        this.trade.saveTrade(isItem,stacks);
 
         for (int slot = 0; slot < 2; slot++) {
             ItemStack stack = this.getStack(slot);
