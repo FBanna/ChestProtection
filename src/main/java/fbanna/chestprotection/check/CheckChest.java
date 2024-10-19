@@ -130,7 +130,15 @@ public class CheckChest {
 
                         for (int i = 0; i < 2; i++){
                             TradeItem saveItem;
-                            JsonElement element = JsonParser.parseString(pageList[i]);
+                            JsonElement element;
+
+                            try{
+                                element = JsonParser.parseString(pageList[i]);
+                            } catch (Exception e) {
+                                success = false;
+                                break;
+                            }
+
 
                             //DataResult<ItemStack> result = ItemStack.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
                             DataResult<TradeItem> result = TradeItem.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
@@ -138,23 +146,25 @@ public class CheckChest {
                             if(result.isSuccess()){
                                 saveItem = result.getOrThrow();
 
+                                if(!saveItem.getIsItem()) {
+                                    for (ComponentType<?> type : saveItem.getStack().copy().getComponents().getTypes()) {
+
+
+                                        // ADD MORE DEFAULTS
+                                        if (type.equals(DataComponentTypes.CONTAINER)) {
+                                            saveItem.setItem(Items.SHULKER_BOX);
+                                            //item = item.copyComponentsToNewStack(Items.SHULKER_BOX, item.getCount());
+                                        }
+                                    }
+                                }
+
                             } else {
                                 ChestProtection.LOGGER.info("Error in parsing, when someone opened a chest! ChestProtection");
                                 success = false;
                                 break;
                             }
 
-                            if(!saveItem.getIsItem()) {
-                                for (ComponentType<?> type : saveItem.getStack().copy().getComponents().getTypes()) {
 
-
-                                    // ADD MORE DEFAULTS
-                                    if (type.equals(DataComponentTypes.CONTAINER)) {
-                                        saveItem.setItem(Items.SHULKER_BOX);
-                                        //item = item.copyComponentsToNewStack(Items.SHULKER_BOX, item.getCount());
-                                    }
-                                }
-                            }
 
                             out[i] = saveItem;
                         }
@@ -205,7 +215,9 @@ public class CheckChest {
 
                         if (data != null){
 
-                            if(book.generation() != 0) {
+                            NbtCompound nbt = data.copyNbt();
+
+                            if(book.generation() != 0 || nbt.get("profitInventory").getType()==NbtElement.INT_ARRAY_TYPE) {
                                 this.stack.set(DataComponentTypes.WRITTEN_BOOK_CONTENT, new WrittenBookContentComponent(book.title(),book.author(),0,book.pages(),book.resolved()));
 
 
@@ -223,30 +235,42 @@ public class CheckChest {
 
                             } else if(data.contains("profitInventory")){
 
-                                NbtCompound nbt = data.copyNbt();
 
-                                /*if(nbt.get("profitInventory").getType()==NbtElement.INT_ARRAY_TYPE) {
+
+                                /*this.profitInventory = new ProfitInventory(this, 54);
+                                if() {
                                     ChestProtection.LOGGER.info("OLD BOOK CONVERTING!");
                                     this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
-                                        currentNbt.putString("profit");
-                                    }))
+                                        currentNbt.putString("profitInventory", profitInventory.encode());
+                                    }));
                                 }*/
 
                                 String string = nbt.getString("profitInventory");
 
-                                JsonElement element = JsonParser.parseString(string);
+                                JsonElement element;
+
+                                try {
+                                    element = JsonParser.parseString(string);
+
+                                    DataResult<ContainerComponent> result = ContainerComponent.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+
+                                    if(result.isSuccess()){
+                                        //ChestProtection.LOGGER.info(String.valueOf(stacks));
+                                        this.profitInventory = new ProfitInventory(this, 54, result.getOrThrow().stream().toList());
+                                    } else {
+                                        this.profitInventory = new ProfitInventory(this, 54);
+                                    }
+
+                                } catch (Exception e) {
+                                    this.profitInventory = new ProfitInventory(this, 54);
+                                }
+
+
 
 
 
                                 //DataResult<List<ItemStack>> result = ProfitInventory.inventoryCodec.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
-                                DataResult<ContainerComponent> result = ContainerComponent.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
 
-                                if(result.isSuccess()){
-                                    //ChestProtection.LOGGER.info(String.valueOf(stacks));
-                                    this.profitInventory = new ProfitInventory(this, 54, result.getOrThrow().stream().toList());
-                                } else {
-                                    this.profitInventory = new ProfitInventory(this, 54);
-                                }
 
 
 
