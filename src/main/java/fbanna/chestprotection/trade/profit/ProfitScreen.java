@@ -1,6 +1,7 @@
 package fbanna.chestprotection.trade.profit;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
+import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
@@ -14,10 +15,19 @@ public class ProfitScreen extends SimpleGui {
 
         this.setTitle(Text.of("profits"));
 
-        this.profitInventory = new ProfitInventory(trade, player, 54);
+        //this.profitInventory = new ProfitInventory(trade, player, 54);
+        this.profitInventory = trade.profitInventory;
+        this.profitInventory.open(player);
 
         for(int i = 0; i<this.getSize(); i++){
-            setSlotRedirect(i, new Slot(profitInventory, i, 0,0));
+            setSlotRedirect(i, new Slot(this.profitInventory, i, 0,0));
         }
+    }
+
+    @Override
+    public void onClose(){
+
+        this.profitInventory.close();
+
     }
 }

@@ -8,10 +8,12 @@ import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.trade.TradeItem;
 import fbanna.chestprotection.trade.TradeInventory;
 import fbanna.chestprotection.trade.TradeItemList;
+import fbanna.chestprotection.trade.profit.ProfitInventory;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.component.type.WrittenBookContentComponent;
 import net.minecraft.inventory.Inventory;
@@ -23,6 +25,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.RawFilteredPair;
 import net.minecraft.text.Text;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -45,7 +48,9 @@ public class CheckChest {
     //public ItemStack product;
     public TradeItemList tradeItems;
     public Inventory chestInventory;
-    public int[] profitInventory = new int[54];
+    //public int[] profitInventory = new int[54];
+    //public DefaultedList<ItemStack> profitInventory = DefaultedList.ofSize(54);
+    public ProfitInventory profitInventory;
     public World world;
     public BlockPos position;
     //private WrittenBookContentComponent book;
@@ -146,7 +151,6 @@ public class CheckChest {
                                     // ADD MORE DEFAULTS
                                     if (type.equals(DataComponentTypes.CONTAINER)) {
                                         saveItem.setItem(Items.SHULKER_BOX);
-                                        ChestProtection.LOGGER.info(String.valueOf(saveItem.getStack()));
                                         //item = item.copyComponentsToNewStack(Items.SHULKER_BOX, item.getCount());
                                     }
                                 }
@@ -205,32 +209,57 @@ public class CheckChest {
                                 this.stack.set(DataComponentTypes.WRITTEN_BOOK_CONTENT, new WrittenBookContentComponent(book.title(),book.author(),0,book.pages(),book.resolved()));
 
 
-                                this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
+                                /*this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
                                     currentNbt.putIntArray("profitInventory", this.profitInventory);
+                                }));*/
+
+
+                                this.profitInventory = new ProfitInventory(this, 54);
+                                this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
+                                    //currentNbt.putIntArray("profitInventory", this.profitInventory);
+                                    //currentNbt.put("profitInventory", NbtElement.COMPOUND_TYPE)
+                                    currentNbt.putString("profitInventory", profitInventory.encode());
                                 }));
 
                             } else if(data.contains("profitInventory")){
 
                                 NbtCompound nbt = data.copyNbt();
 
-                                if(nbt.get("profitInventory").getType()==NbtElement.INT_ARRAY_TYPE) {
+                                /*if(nbt.get("profitInventory").getType()==NbtElement.INT_ARRAY_TYPE) {
                                     ChestProtection.LOGGER.info("OLD BOOK CONVERTING!");
                                     this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
-                                        currentNbt.put
+                                        currentNbt.putString("profit");
                                     }))
+                                }*/
+
+                                String string = nbt.getString("profitInventory");
+
+                                JsonElement element = JsonParser.parseString(string);
+
+
+
+                                //DataResult<List<ItemStack>> result = ProfitInventory.inventoryCodec.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+                                DataResult<ContainerComponent> result = ContainerComponent.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+
+                                if(result.isSuccess()){
+                                    //ChestProtection.LOGGER.info(String.valueOf(stacks));
+                                    this.profitInventory = new ProfitInventory(this, 54, result.getOrThrow().stream().toList());
+                                } else {
+                                    this.profitInventory = new ProfitInventory(this, 54);
                                 }
 
 
-                                this.profitInventory = nbt.getIntArray("profitInventory");
 
-                                if (this.profitInventory.length != 54){
-                                    this.profitInventory = new int[54];
-                                }
+
+                                //if (this.profitInventory.length != 54){
+                                //    this.profitInventory = new int[54];
+                                //}
                             }
                         }
                     } else {
+                        this.profitInventory = new ProfitInventory(this, 54);
                         this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
-                            currentNbt.putIntArray("profitInventory", this.profitInventory);
+                            currentNbt.putString("profitInventory", profitInventory.encode());
                         }));
                     }
                 }
@@ -299,7 +328,6 @@ public class CheckChest {
                 }
 
             } else {
-                ChestProtection.LOGGER.info("isItem = " + isItem[i]);
                 TradeItem saveItemCodec = new TradeItem(isItem[i], transactionStack);
                 DataResult<JsonElement> result = TradeItem.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), saveItemCodec);
                 //DataResult<JsonElement> result = ItemStack.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), transactionStack);
@@ -325,6 +353,7 @@ public class CheckChest {
 
     }
 
+    /*
     public void setProfitInventory(SimpleInventory inventory) {
 
         int[] arrayInventory = new int[inventory.size()];
@@ -338,31 +367,25 @@ public class CheckChest {
         this.profitInventory = arrayInventory;
 
         writeProfitInventory();
-    }
+    }*/
 
-    public boolean canFit(ItemStack stack) {
 
-        int count = stack.getCount();
-
-        for (int slot: this.profitInventory) {
-
-            count -= stack.getMaxCount() - slot;
-
-            if (count <= 0) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void writeProfitInventory() {
 
-        this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
+        /*this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
             currentNbt.remove("profitInventory");
             currentNbt.putIntArray("profitInventory", this.profitInventory);
+        }));*/
+
+
+        this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
+            currentNbt.putString("profitInventory", profitInventory.encode());
         }));
+
     }
 
+    /*
     public void insertProfitInventory(ItemStack stack){
 
         int itemCountdown = stack.getCount();
@@ -399,5 +422,5 @@ public class CheckChest {
 
         writeProfitInventory();
 
-    }
+    }*/
 }

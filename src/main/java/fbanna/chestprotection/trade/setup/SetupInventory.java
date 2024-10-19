@@ -91,7 +91,7 @@ public class SetupInventory extends SimpleInventory {
 
 
 
-                    ChestProtection.LOGGER.info(gui.getSlot(index).getItemStack() + type.toString());
+                    //ChestProtection.LOGGER.info(gui.getSlot(index).getItemStack() + type.toString());
 
                 });
 

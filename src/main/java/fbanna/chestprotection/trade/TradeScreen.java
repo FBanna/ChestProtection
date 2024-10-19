@@ -173,7 +173,7 @@ public class TradeScreen extends SimpleGui {
                     .setName(Text.of("No stock! contact " + this.trade.author));
 
 
-        } else if (!this.trade.canFit(this.trade.tradeItems.getCostStack())) {
+        } else if (!this.tradeInventory.canFit()) {
 
             this.accept.setItem(Items.BARRIER)
                     .setName(Text.of("Profit full! contact " + this.trade.author));
