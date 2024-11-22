@@ -2,8 +2,14 @@ package fbanna.chestprotection.mixin;
 
 import java.util.List;
 
+import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.entity.Entity;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.explosion.ExplosionBehavior;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,36 +21,19 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(Explosion.class)
-public abstract class MixinExplosion {
+@Mixin(Entity.class)
+public class MixinExplosion {
 
-    @Shadow
-    @Final
-    private World world;
-
-    @Shadow
-    public abstract List<BlockPos> getAffectedBlocks();
-
-    @Inject(method = "collectBlocksAndDamageEntities", at = @At("TAIL"))
-    private void prevent_explosion(CallbackInfo info) {
-        getAffectedBlocks().removeIf(pos -> {
-            BlockEntity block = world.getBlockEntity(pos);
-
-            if (block instanceof ChestBlockEntity) {
-
-                CheckChest book = new CheckChest(pos, world);
-                if (book.chestStatus != CheckChest.status.CLEAR){
-
-                    return true;
-
-                }
+    @Inject(method = "canExplosionDestroyBlock", at = @At("HEAD"), cancellable = true)
+    private void prevent_explosion(Explosion explosion, BlockView world, BlockPos pos, BlockState state, float power, CallbackInfoReturnable<Boolean> cir) {
+        if (state.getBlock() instanceof ChestBlock) {
+            CheckChest book = new CheckChest(pos, explosion.getWorld());
+            if (book.chestStatus != CheckChest.status.CLEAR) {
+                cir.setReturnValue(false);
 
             }
-
-            return false;
-
-
-        });
+        }
     }
 }
