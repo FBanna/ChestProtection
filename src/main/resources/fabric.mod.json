@@ -8,7 +8,7 @@
 		"FBanna"
 	],
 	"license": "CC0-1.0",
-	"environment": "server",
+	"environment": "*",
 	"entrypoints": {
 		"main": [
 			"fbanna.chestprotection.ChestProtection"
