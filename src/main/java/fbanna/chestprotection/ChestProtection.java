@@ -18,73 +18,69 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 public class ChestProtection implements ModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger("chest-protection");
+  public static final Logger LOGGER = LoggerFactory.getLogger("chest-protection");
 
-	@Override
-	public void onInitialize() {
+  @Override
+  public void onInitialize() {
 
-		LOGGER.info("Now protecting your chests!");
+    LOGGER.info("Now protecting your chests!");
+    // CHECK FOR BLOCK USE
 
-		// CHECK FOR BLOCK USE
+    UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
 
-		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-			
+      if (!player.isSpectator()) {
 
-			if(!player.isSpectator()){
+        CheckChest book = new CheckChest(hitResult.getBlockPos(), world);
 
-				CheckChest book = new CheckChest(hitResult.getBlockPos(), world);
+        if (book.chestStatus == CheckChest.status.LOCK) {
+          if (!Objects.equals(book.author, player.getName().getString())) {
+            player.sendMessage(
+                Text.translatable("Chest is locked by %s!".formatted(book.author)).formatted(Formatting.RED), true);
+            return ActionResult.FAIL;
+          }
+        } else if (book.chestStatus == CheckChest.status.SELL) {
 
-				if(book.chestStatus == CheckChest.status.LOCK){
-					if(!Objects.equals(book.author, player.getName().getString())){
-						player.sendMessage(Text.translatable("Chest is locked by %s!".formatted(book.author)).formatted(Formatting.RED), true);
-						return ActionResult.FAIL;
-					}
-				} else if (book.chestStatus == CheckChest.status.SELL) {
+          SimpleGui gui = new TradeScreen((ServerPlayerEntity) player, book);
+          gui.open();
 
-					SimpleGui gui = new TradeScreen((ServerPlayerEntity) player, book);
-					gui.open();
+          return ActionResult.FAIL;
 
-					return ActionResult.FAIL;
+        } else if (book.chestStatus == CheckChest.status.ERROR) {
 
-				} else if (book.chestStatus == CheckChest.status.ERROR) {
+          if (Objects.equals(book.author, player.getName().getString())) {
+            SimpleGui gui = new SetupScreen((ServerPlayerEntity) player, book);
+            gui.open();
+          } else {
+            player.sendMessage(Text.translatable("Shop is in an error state. Contact %s!".formatted(book.author))
+                .formatted(Formatting.RED), true);
+          }
 
-					if(Objects.equals(book.author, player.getName().getString())) {
-						SimpleGui gui = new SetupScreen((ServerPlayerEntity) player, book);
-						gui.open();
-					} else {
-						player.sendMessage(Text.translatable("Shop is in an error state. Contact %s!".formatted(book.author)).formatted(Formatting.RED), true);
-					}
+          return ActionResult.FAIL;
+        }
 
+      }
+      return ActionResult.PASS;
+    });
 
-					return ActionResult.FAIL;
-				}
+    // CHECK FOR BLOCK BREAK
 
-			}
-            return ActionResult.PASS;
-        });
+    PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
+      if (!player.isSpectator()) {
 
+        CheckChest book = new CheckChest(pos, world);
 
+        if (book.chestStatus != CheckChest.status.CLEAR) {
+          if (!Objects.equals(book.author, player.getName().getString())) {
+            player.sendMessage(
+                Text.translatable("Chest is locked by %s!".formatted(book.author)).formatted(Formatting.RED), true);
+            return false;
+          }
+        }
 
-		// CHECK FOR BLOCK BREAK
+      }
+      return true;
+    });
 
-		PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
-			if(!player.isSpectator()){
-
-				CheckChest book = new CheckChest(pos, world);
-
-				if(book.chestStatus != CheckChest.status.CLEAR){
-					if(!Objects.equals(book.author, player.getName().getString())){
-						player.sendMessage(Text.translatable("Chest is locked by %s!".formatted(book.author)).formatted(Formatting.RED), true);
-						return false;
-					}
-				}
-
-			}
-			return true;
-		});
-
-	}
-
-
+  }
 
 }
