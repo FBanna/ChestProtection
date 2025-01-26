@@ -8,6 +8,7 @@ import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.trade.TradeItem;
 import fbanna.chestprotection.trade.TradeInventory;
 import fbanna.chestprotection.trade.TradeItemList;
+import fbanna.chestprotection.trade.TradeScreen;
 import fbanna.chestprotection.trade.profit.ProfitInventory;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
@@ -32,6 +33,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class CheckChest {
 
@@ -55,6 +57,8 @@ public class CheckChest {
     public BlockPos position;
     //private WrittenBookContentComponent book;
     private ItemStack stack;
+
+    private TradeScreen screen = null;
 
 
 
@@ -323,6 +327,25 @@ public class CheckChest {
         } else {
             return false;
         }
+    }
+
+    public void setScreen(TradeScreen screen){
+        this.screen = screen;
+    }
+
+    public Optional<TradeScreen> getScreen(){
+        if(this.screen != null) {
+            return Optional.of(this.screen);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<CheckChest> checkSame(BlockPos pos, World world) {
+        if(pos.equals(this.position) && world.equals(this.world)) {
+            return Optional.of(this);
+        }
+
+        return Optional.empty();
     }
 
     public void saveTrade(boolean[] isItem,ItemStack[] stacks) {

@@ -2,6 +2,7 @@ package fbanna.chestprotection.trade;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
 import fbanna.chestprotection.trade.profit.ProfitScreen;
 import fbanna.chestprotection.trade.setup.SetupScreen;
@@ -30,9 +31,9 @@ public class TradeScreen extends SimpleGui {
     public TradeScreen(ServerPlayerEntity player, CheckChest trade) {
         super(ScreenHandlerType.GENERIC_9X3, player, false);
 
+        trade.setScreen(this);
 
         this.trade = trade;
-
 
         this.accept = new GuiElementBuilder()
                 .setItem(Items.RED_BANNER)
@@ -201,6 +202,8 @@ public class TradeScreen extends SimpleGui {
     @Override
     public void onClose(){
         this.tradeInventory.dropAll();
+        this.close();
+        ChestProtection.SHOPS.remove(this.trade);
     }
 
 

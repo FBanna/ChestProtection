@@ -15,10 +15,14 @@ import net.minecraft.util.Formatting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ChestProtection implements ModInitializer {
   public static final Logger LOGGER = LoggerFactory.getLogger("chest-protection");
+
+  public static List<CheckChest> SHOPS = new ArrayList<>();
 
   @Override
   public void onInitialize() {
@@ -39,6 +43,8 @@ public class ChestProtection implements ModInitializer {
             return ActionResult.FAIL;
           }
         } else if (book.chestStatus == CheckChest.status.SELL) {
+
+          SHOPS.add(book);
 
           SimpleGui gui = new TradeScreen((ServerPlayerEntity) player, book);
           gui.open();

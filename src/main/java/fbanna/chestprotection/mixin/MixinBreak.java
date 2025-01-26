@@ -1,27 +1,57 @@
 package fbanna.chestprotection.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.sugar.Local;
+
+import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.WitherEntity;
+import fbanna.chestprotection.trade.TradeScreen;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(WitherEntity.class)
-public abstract class MixinBreak {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-    @ModifyExpressionValue(method = "mobTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/boss/WitherEntity;canDestroy(Lnet/minecraft/block/BlockState;)Z"))
+@Mixin(ItemScatterer.class)
+public class MixinBreak {
 
-    private boolean canDestroy(boolean original, @Local BlockPos blockPos) {
+    @Inject(method = "onStateReplaced", at = @At("TAIL"))
+    private static void inject(BlockState state, BlockState newState, World world, BlockPos pos, CallbackInfo ci){
+        //ChestProtection.LOGGER.info(String.valueOf(ChestProtection.SHOPS.size()));
+        //ChestProtection.LOGGER.info("1hello>???");
 
-        World world = ((Entity) (Object) this).getWorld();
+        //for(CheckChest shop: ChestProtection.SHOPS) {
+        for(int i = ChestProtection.SHOPS.size()-1; i >= 0; i--) {
+            CheckChest shop = ChestProtection.SHOPS.get(i);
+            //ChestProtection.LOGGER.info("1" + shop.position + shop.world + ", " + pos + world);
+            Optional<CheckChest> potentialChest = shop.checkSame(pos, world);
 
-        CheckChest book = new CheckChest(blockPos, world);
+            if (potentialChest.isPresent()) {
+                //ChestProtection.LOGGER.info("2hello>???");
 
-        return original && (book.chestStatus == CheckChest.status.CLEAR);
+                CheckChest chest = potentialChest.get();
+
+                if (chest.getScreen().isPresent()) {
+
+                    //ChestProtection.LOGGER.info("3hello>???");
+                    TradeScreen screen = chest.getScreen().get();
+
+                    screen.onClose();
+                }
+
+            }
+        }
+
+
+
+
 
     }
+
 }
