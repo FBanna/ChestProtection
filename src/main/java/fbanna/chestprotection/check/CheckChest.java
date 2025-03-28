@@ -249,7 +249,9 @@ public class CheckChest {
                                     }));
                                 }*/
 
-                                String string = nbt.getString("profitInventory");
+
+
+                                String string = nbt.getString("profitInventory").get();
 
                                 JsonElement element;
 
