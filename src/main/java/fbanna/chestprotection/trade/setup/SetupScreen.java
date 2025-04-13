@@ -30,6 +30,8 @@ public class SetupScreen extends SimpleGui {
         this.setupInventory = new SetupInventory(player, trade, this);
         this.trade = trade;
 
+        trade.setScreen(this);
+
         int[] panes = {19,20,21,22,23,24,25};
         for(int slot: panes) {
             setSlot(slot, new ItemStack(Items.BLACK_STAINED_GLASS_PANE, 1));
@@ -56,6 +58,9 @@ public class SetupScreen extends SimpleGui {
 
     @Override
     public void onClose(){
+
         this.setupInventory.dropAll();
+        this.close();
+        ChestProtection.SHOPS.remove(this.trade);
     }
 }

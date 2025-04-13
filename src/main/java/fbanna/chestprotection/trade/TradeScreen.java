@@ -109,8 +109,10 @@ public class TradeScreen extends SimpleGui {
                     .setItem(Items.PAPER)
                     .setName(Text.of("Setup"))
                     .setCallback((index, clickType, action) -> {
-                        SimpleGui gui = new SetupScreen(this.getPlayer(), this.trade);
                         this.close();
+
+                        SimpleGui gui = new SetupScreen(this.getPlayer(), this.trade);
+                        ChestProtection.SHOPS.add(this.trade);
                         gui.open();
                     });
 
@@ -118,8 +120,9 @@ public class TradeScreen extends SimpleGui {
 
             tradeItems[0].setCallback((index, clickType, action) -> {
                 //SimpleGui gui = new ProfitScreen(this.getPlayer(), this.trade);
-                SimpleGui gui = new ProfitScreen(this.getPlayer(), this.trade);
                 this.close();
+                SimpleGui gui = new ProfitScreen(this.getPlayer(), this.trade);
+                ChestProtection.SHOPS.add(this.trade);
                 gui.open();
             }).glow();
 
@@ -201,9 +204,13 @@ public class TradeScreen extends SimpleGui {
 
     @Override
     public void onClose(){
+
+
         this.tradeInventory.dropAll();
         this.close();
         ChestProtection.SHOPS.remove(this.trade);
+
+        //ChestProtection.LOGGER.info("IM HERE "+ChestProtection.SHOPS.size());
     }
 
 

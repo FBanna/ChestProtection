@@ -34,7 +34,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation include("eu.pb4:sgui:1.8.1+1.21.4")
+	modImplementation include("eu.pb4:sgui:1.9.0+1.21.5")
 	
 }
 

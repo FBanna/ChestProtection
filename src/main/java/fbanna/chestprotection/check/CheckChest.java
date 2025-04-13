@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.trade.TradeItem;
 import fbanna.chestprotection.trade.TradeInventory;
@@ -58,7 +59,7 @@ public class CheckChest {
     //private WrittenBookContentComponent book;
     private ItemStack stack;
 
-    private TradeScreen screen = null;
+    private SimpleGui screen = null;
 
 
 
@@ -135,6 +136,11 @@ public class CheckChest {
                         for (int i = 0; i < 2; i++){
                             TradeItem saveItem;
                             JsonElement element;
+
+                            if(pageList[i].isEmpty()){
+                                success = false;
+                                break;
+                            }
 
                             try{
                                 element = JsonParser.parseString(pageList[i]);
@@ -330,11 +336,11 @@ public class CheckChest {
         }
     }
 
-    public void setScreen(TradeScreen screen){
+    public void setScreen(SimpleGui screen){
         this.screen = screen;
     }
 
-    public Optional<TradeScreen> getScreen(){
+    public Optional<SimpleGui> getScreen(){
         if(this.screen != null) {
             return Optional.of(this.screen);
         }
@@ -353,6 +359,8 @@ public class CheckChest {
         List<RawFilteredPair<Text>> newPages = new ArrayList<>();
         WrittenBookContentComponent book = this.stack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT);
 
+
+
         /*
 
         //ChestProtection.LOGGER.info(stacks[1].encode(world.getRegistryManager()).toString());
@@ -364,18 +372,22 @@ public class CheckChest {
 
         //}
 
+        //ChestProtection.LOGGER.info("STACK LENGTH: " + stacks.length);
+
         int i = 0;
 
         for (ItemStack transactionStack: stacks) {
             if (transactionStack == null || transactionStack.isEmpty()) {
 
-                if(book.pages().size()>=i){
+
+                if(book != null && book.pages().size()>i){
                     newPages.add(book.pages().get(i));
                 } else {
                     newPages.add(RawFilteredPair.of(Text.empty()));
                 }
 
             } else {
+
                 TradeItem saveItemCodec = new TradeItem(isItem[i], transactionStack);
                 DataResult<JsonElement> result = TradeItem.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), saveItemCodec);
                 //DataResult<JsonElement> result = ItemStack.CODEC.encodeStart(world.getRegistryManager().getOps(JsonOps.INSTANCE), transactionStack);

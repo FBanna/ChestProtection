@@ -10,8 +10,13 @@ import net.minecraft.text.Text;
 
 public class ProfitScreen extends SimpleGui {
     ProfitInventory profitInventory;
+    CheckChest trade;
     public ProfitScreen(ServerPlayerEntity player, CheckChest trade) {
         super(ScreenHandlerType.GENERIC_9X6, player, false);
+
+        this.trade = trade;
+
+        trade.setScreen(this);
 
         this.setTitle(Text.of("profits"));
 
@@ -28,6 +33,8 @@ public class ProfitScreen extends SimpleGui {
     public void onClose(){
 
         this.profitInventory.close();
+        this.close();
+        ChestProtection.SHOPS.remove(this.trade);
 
     }
 }

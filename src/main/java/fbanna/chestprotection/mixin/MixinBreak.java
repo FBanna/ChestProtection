@@ -1,6 +1,7 @@
 package fbanna.chestprotection.mixin;
 
 
+import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
 import fbanna.chestprotection.trade.TradeScreen;
@@ -22,7 +23,7 @@ import java.util.Optional;
 public class MixinBreak {
 
     @Inject(method = "onStateReplaced", at = @At("TAIL"))
-    private static void inject(BlockState state, BlockState newState, World world, BlockPos pos, CallbackInfo ci){
+    private static void inject(BlockState state, World world, BlockPos pos, CallbackInfo ci){
         //ChestProtection.LOGGER.info(String.valueOf(ChestProtection.SHOPS.size()));
         //ChestProtection.LOGGER.info("1hello>???");
 
@@ -32,26 +33,24 @@ public class MixinBreak {
             //ChestProtection.LOGGER.info("1" + shop.position + shop.world + ", " + pos + world);
             Optional<CheckChest> potentialChest = shop.checkSame(pos, world);
 
+
+            // found the chest
             if (potentialChest.isPresent()) {
-                //ChestProtection.LOGGER.info("2hello>???");
 
                 CheckChest chest = potentialChest.get();
 
-                if (chest.getScreen().isPresent()) {
+                Optional<SimpleGui> optionalScreen = chest.getScreen();
 
-                    //ChestProtection.LOGGER.info("3hello>???");
-                    TradeScreen screen = chest.getScreen().get();
+                if (optionalScreen.isPresent()) {
+
+                    SimpleGui screen = optionalScreen.get();
 
                     screen.onClose();
                 }
 
+                return; //break out of loop
+
             }
         }
-
-
-
-
-
     }
-
 }

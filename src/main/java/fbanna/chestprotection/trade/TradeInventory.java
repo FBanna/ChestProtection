@@ -66,6 +66,10 @@ public class TradeInventory extends SimpleInventory {
         ItemStack stack = stack1ORIGINAL.copy();
         TradeItem tradeStack = tradeItemORIGINAL.copy();
 
+        if(stack1ORIGINAL.isEmpty()){
+            return false;
+        }
+
         if(tradeStack.getIsItem() && stack.getItem() != tradeStack.getStack().getItem()){
             return false;
         }
