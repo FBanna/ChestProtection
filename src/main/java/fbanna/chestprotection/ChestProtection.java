@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ChestProtection implements ModInitializer {
-  public static final Logger LOGGER = LoggerFactory.getLogger("chest-protection");
+  public static final Logger LOGGER = LoggerFactory.getLogger("ChestProtection");
 
   public static List<CheckChest> SHOPS = new ArrayList<>();
 
