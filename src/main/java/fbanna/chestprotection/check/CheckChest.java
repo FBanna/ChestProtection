@@ -401,6 +401,8 @@ public class CheckChest {
             i++;
         }
 
+        ChestProtection.LOGGER.info(newPages.toString());
+
         WrittenBookContentComponent book1 = new WrittenBookContentComponent(
                 book.title(),
                 book.author(),
