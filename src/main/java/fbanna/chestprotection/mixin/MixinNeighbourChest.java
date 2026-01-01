@@ -13,7 +13,7 @@ import java.util.Objects;
 @Mixin(ChestBlock.class)
 public class MixinNeighbourChest {
 
-    @ModifyVariable(method = "getPlacementState", at = @At(value = "STORE", ordinal = 3))
+    @ModifyVariable(method = "getPlacementState", at = @At(value = "STORE", ordinal = 2))
     private ChestType doubleChest(ChestType chestType, ItemPlacementContext ctx){
 
 
@@ -28,8 +28,9 @@ public class MixinNeighbourChest {
             }
 
         } else {
-            return ChestType.RIGHT;
+            return chestType;
         }
+
 
 
     }
