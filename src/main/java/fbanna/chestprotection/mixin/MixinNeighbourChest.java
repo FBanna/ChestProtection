@@ -14,7 +14,7 @@ import java.util.Objects;
 public class MixinNeighbourChest {
 
     @ModifyVariable(method = "getPlacementState", at = @At(value = "STORE", ordinal = 3))
-    private ChestType doubleChest(ChestType type, ItemPlacementContext ctx){
+    private ChestType doubleChest(ChestType chestType, ItemPlacementContext ctx){
 
 
         CheckChest book = new CheckChest(ctx.getBlockPos().offset(ctx.getHorizontalPlayerFacing().getOpposite().rotateYCounterclockwise(),1), ctx.getWorld());

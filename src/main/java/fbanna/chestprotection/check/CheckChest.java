@@ -221,6 +221,7 @@ public class CheckChest {
 
 
                     if(this.stack.contains(DataComponentTypes.CUSTOM_DATA)){
+
                         NbtComponent data = this.stack.get(DataComponentTypes.CUSTOM_DATA);
 
                         if (data != null){
@@ -243,7 +244,9 @@ public class CheckChest {
                                     currentNbt.putString("profitInventory", profitInventory.encode());
                                 }));
 
-                            } else if(data.contains("profitInventory")){
+
+
+                            } else if(nbt.contains("profitInventory")){
 
 
 

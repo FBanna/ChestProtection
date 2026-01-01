@@ -17,7 +17,9 @@ public abstract class MixinWither {
 
     private boolean canDestroy(boolean original, @Local BlockPos blockPos) {
 
-        World world = ((Entity) (Object) this).getWorld();
+
+
+        World world = ((Entity) (Object) this).getEntityWorld();
 
         CheckChest book = new CheckChest(blockPos, world);
 
