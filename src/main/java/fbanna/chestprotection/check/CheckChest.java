@@ -6,11 +6,10 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.trade.TradeItem;
-import fbanna.chestprotection.trade.TradeInventory;
-import fbanna.chestprotection.trade.TradeItemList;
-import fbanna.chestprotection.trade.TradeScreen;
-import fbanna.chestprotection.trade.profit.ProfitInventory;
+import fbanna.chestprotection.screens.trade.TradeItem;
+import fbanna.chestprotection.screens.trade.TradeInventory;
+import fbanna.chestprotection.screens.trade.TradeItemList;
+import fbanna.chestprotection.screens.profit.ProfitInventory;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.component.ComponentType;
@@ -19,7 +18,6 @@ import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.component.type.WrittenBookContentComponent;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.WrittenBookItem;
@@ -27,7 +25,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.RawFilteredPair;
 import net.minecraft.text.Text;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -74,36 +71,42 @@ public class CheckChest {
             this.chestInventory = ChestBlock.getInventory((ChestBlock) world.getBlockState(position).getBlock(), world.getBlockState(position), world, position, true);
             this.stack = this.chestInventory.getStack(0);
 
-
-            // IF ITS A BOOK
-            if(this.stack.getItem() instanceof WrittenBookItem){
-
-                WrittenBookContentComponent book;
-
-                book = this.stack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT);
+            CheckChest(stack)
 
 
-                // IF ITS A LOCK
-                if(Objects.equals(book.title().raw(), "LOCK")) {
+        }
+    }
 
-                    this.chestStatus = status.LOCK;
+    public CheckChest(ItemStack book) {
+        // IF ITS A BOOK
+        if(this.stack.getItem() instanceof WrittenBookItem){
 
-                    this.author = book.author();
+            WrittenBookContentComponent book;
+
+            book = this.stack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT);
+
+
+            // IF ITS A LOCK
+            if(Objects.equals(book.title().raw(), "LOCK")) {
+
+                this.chestStatus = status.LOCK;
+
+                this.author = book.author();
 
                 // IF ITS A SELL
 
-                } else if (Objects.equals(book.title().raw(), "SELL")) {
+            } else if (Objects.equals(book.title().raw(), "SELL")) {
 
-                    this.chestStatus = status.ERROR;
+                this.chestStatus = status.ERROR;
 
-                    // minecraft:diamond-64->minecraft:stick-1
+                // minecraft:diamond-64->minecraft:stick-1
 
-                    this.author = book.author();
+                this.author = book.author();
 
-                    List<RawFilteredPair<Text>> pages = book.pages();
+                List<RawFilteredPair<Text>> pages = book.pages();
 
-                    // CHECK SIZE
-                    if(pages.size() == 2){
+                // CHECK SIZE
+                if(pages.size() == 2){
 
                         /*
 
@@ -127,64 +130,68 @@ public class CheckChest {
 
 
 
-                        String[] pageList = {pages.get(0).raw().getString(), pages.get(1).raw().getString()};
-                        //ItemStack[] out = new ItemStack[2];
-                        TradeItem[] out = new TradeItem[2];
-                        boolean success = true;
+                    String[] pageList = {pages.get(0).raw().getString(), pages.get(1).raw().getString()};
+                    //ItemStack[] out = new ItemStack[2];
+                    TradeItem[] out = new TradeItem[2];
+                    boolean success = true;
 
 
-                        for (int i = 0; i < 2; i++){
-                            TradeItem saveItem;
-                            JsonElement element;
+                    for (int i = 0; i < 2; i++){
+                        TradeItem saveItem;
+                        JsonElement element;
 
-                            if(pageList[i].isEmpty()){
-                                success = false;
-                                break;
-                            }
+                        if(pageList[i].isEmpty()){
+                            success = false;
+                            break;
+                        }
 
-                            try{
-                                element = JsonParser.parseString(pageList[i]);
-                            } catch (Exception e) {
-                                success = false;
-                                break;
-                            }
-
-
-                            //DataResult<ItemStack> result = ItemStack.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
-                            DataResult<TradeItem> result = TradeItem.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
-
-                            if(result.isSuccess()){
-                                saveItem = result.getOrThrow();
-
-                                if(!saveItem.getIsItem()) {
-                                    for (ComponentType<?> type : saveItem.getStack().copy().getComponents().getTypes()) {
+                        try{
+                            element = JsonParser.parseString(pageList[i]);
+                        } catch (Exception e) {
+                            success = false;
+                            break;
+                        }
 
 
-                                        // ADD MORE DEFAULTS
-                                        if (type.equals(DataComponentTypes.CONTAINER)) {
-                                            saveItem.setItem(Items.SHULKER_BOX);
-                                            //item = item.copyComponentsToNewStack(Items.SHULKER_BOX, item.getCount());
-                                        }
-                                    }
+                        //DataResult<ItemStack> result = ItemStack.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+                        DataResult<TradeItem> result = TradeItem.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+
+                        if(result.isSuccess()){
+                            saveItem = result.getOrThrow();
+
+                            if(!saveItem.getIsItem()) {
+
+                                if (saveItem.getStack().copy().getComponents().contains(DataComponentTypes.CONTAINER)) {
+                                    saveItem.setItem(Items.SHULKER_BOX);
                                 }
-
-                            } else {
-                                ChestProtection.LOGGER.info("Error in parsing, when someone opened a chest! ChestProtection");
-                                success = false;
-                                break;
+//                                    for (ComponentType<?> type : saveItem.getStack().copy().getComponents().getTypes()) {
+//
+//
+//                                        // ADD MORE DEFAULTS
+//                                        if (type.equals(DataComponentTypes.CONTAINER)) {
+//
+//                                            //item = item.copyComponentsToNewStack(Items.SHULKER_BOX, item.getCount());
+//                                        }
+//                                    }
                             }
 
-
-
-                            out[i] = saveItem;
+                        } else {
+                            ChestProtection.LOGGER.info("Error in parsing, when someone opened a chest! ChestProtection");
+                            success = false;
+                            break;
                         }
 
-                        if(success){
-                            //this.cost = out[0].getStack();
-                            //this.product = out[1].getStack();
-                            this.tradeItems = new TradeItemList(out);
-                            this.chestStatus = status.SELL;
-                        }
+
+
+                        out[i] = saveItem;
+                    }
+
+                    if(success){
+                        //this.cost = out[0].getStack();
+                        //this.product = out[1].getStack();
+                        this.tradeItems = new TradeItemList(out);
+                        this.chestStatus = status.SELL;
+                    }
 
 
 
@@ -217,18 +224,18 @@ public class CheckChest {
                         } catch (Exception e){
                             this.chestStatus = status.CLEAR;
                         }*/
-                    }
+                }
 
 
-                    if(this.stack.contains(DataComponentTypes.CUSTOM_DATA)){
-                        NbtComponent data = this.stack.get(DataComponentTypes.CUSTOM_DATA);
+                if(this.stack.contains(DataComponentTypes.CUSTOM_DATA)){
+                    NbtComponent data = this.stack.get(DataComponentTypes.CUSTOM_DATA);
 
-                        if (data != null){
+                    if (data != null){
 
-                            NbtCompound nbt = data.copyNbt();
+                        NbtCompound nbt = data.copyNbt();
 
-                            if(book.generation() != 0 || nbt.get("profitInventory").getType()==NbtElement.INT_ARRAY_TYPE) {
-                                this.stack.set(DataComponentTypes.WRITTEN_BOOK_CONTENT, new WrittenBookContentComponent(book.title(),book.author(),0,book.pages(),book.resolved()));
+                        if(book.generation() != 0 || nbt.get("profitInventory").getType()==NbtElement.INT_ARRAY_TYPE) {
+                            this.stack.set(DataComponentTypes.WRITTEN_BOOK_CONTENT, new WrittenBookContentComponent(book.title(),book.author(),0,book.pages(),book.resolved()));
 
 
                                 /*this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
@@ -236,14 +243,14 @@ public class CheckChest {
                                 }));*/
 
 
-                                this.profitInventory = new ProfitInventory(this, 54);
-                                this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
-                                    //currentNbt.putIntArray("profitInventory", this.profitInventory);
-                                    //currentNbt.put("profitInventory", NbtElement.COMPOUND_TYPE)
-                                    currentNbt.putString("profitInventory", profitInventory.encode());
-                                }));
+                            this.profitInventory = new ProfitInventory(this, 54);
+                            this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
+                                //currentNbt.putIntArray("profitInventory", this.profitInventory);
+                                //currentNbt.put("profitInventory", NbtElement.COMPOUND_TYPE)
+                                currentNbt.putString("profitInventory", profitInventory.encode());
+                            }));
 
-                            } else if(data.contains("profitInventory")){
+                        } else if(data.contains("profitInventory")){
 
 
 
@@ -257,46 +264,45 @@ public class CheckChest {
 
 
 
-                                String string = nbt.getString("profitInventory").get();
-                                JsonElement element;
+                            String string = nbt.getString("profitInventory").get();
+                            JsonElement element;
 
-                                try {
-                                    element = JsonParser.parseString(string);
+                            try {
+                                element = JsonParser.parseString(string);
 
-                                    DataResult<ContainerComponent> result = ContainerComponent.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+                                DataResult<ContainerComponent> result = ContainerComponent.CODEC.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
 
-                                    if(result.isSuccess()){
-                                        //ChestProtection.LOGGER.info(String.valueOf(stacks));
-                                        this.profitInventory = new ProfitInventory(this, 54, result.getOrThrow().stream().toList());
-                                    } else {
-                                        this.profitInventory = new ProfitInventory(this, 54);
-                                    }
-
-                                } catch (Exception e) {
+                                if(result.isSuccess()){
+                                    //ChestProtection.LOGGER.info(String.valueOf(stacks));
+                                    this.profitInventory = new ProfitInventory(this, 54, result.getOrThrow().stream().toList());
+                                } else {
                                     this.profitInventory = new ProfitInventory(this, 54);
                                 }
 
-
-
-
-
-                                //DataResult<List<ItemStack>> result = ProfitInventory.inventoryCodec.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
-
-
-
-
-
-                                //if (this.profitInventory.length != 54){
-                                //    this.profitInventory = new int[54];
-                                //}
+                            } catch (Exception e) {
+                                this.profitInventory = new ProfitInventory(this, 54);
                             }
+
+
+
+
+
+                            //DataResult<List<ItemStack>> result = ProfitInventory.inventoryCodec.parse(world.getRegistryManager().getOps(JsonOps.INSTANCE), element);
+
+
+
+
+
+                            //if (this.profitInventory.length != 54){
+                            //    this.profitInventory = new int[54];
+                            //}
                         }
-                    } else {
-                        this.profitInventory = new ProfitInventory(this, 54);
-                        this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
-                            currentNbt.putString("profitInventory", profitInventory.encode());
-                        }));
                     }
+                } else {
+                    this.profitInventory = new ProfitInventory(this, 54);
+                    this.stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, comp -> comp.apply(currentNbt -> {
+                        currentNbt.putString("profitInventory", profitInventory.encode());
+                    }));
                 }
             }
         }

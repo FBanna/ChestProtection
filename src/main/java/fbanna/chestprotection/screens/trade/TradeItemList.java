@@ -1,11 +1,9 @@
-package fbanna.chestprotection.trade;
+package fbanna.chestprotection.screens.trade;
 
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 public class TradeItemList implements Iterable<TradeItem>{
 

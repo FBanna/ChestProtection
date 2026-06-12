@@ -1,10 +1,7 @@
-package fbanna.chestprotection.trade.setup;
+package fbanna.chestprotection.screens.setup;
 
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.check.CheckChest;
-import net.minecraft.component.ComponentType;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandlerType;
@@ -12,9 +9,6 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import fbanna.chestprotection.ChestProtection;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SetupScreen extends SimpleGui {
 

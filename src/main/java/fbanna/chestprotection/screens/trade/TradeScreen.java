@@ -1,11 +1,11 @@
-package fbanna.chestprotection.trade;
+package fbanna.chestprotection.screens.trade;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
-import fbanna.chestprotection.trade.profit.ProfitScreen;
-import fbanna.chestprotection.trade.setup.SetupScreen;
+import fbanna.chestprotection.screens.profit.ProfitScreen;
+import fbanna.chestprotection.screens.setup.SetupScreen;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.ComponentType;
 import net.minecraft.item.ItemStack;

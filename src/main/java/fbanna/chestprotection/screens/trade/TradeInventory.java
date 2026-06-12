@@ -1,8 +1,8 @@
-package fbanna.chestprotection.trade;
+package fbanna.chestprotection.screens.trade;
 
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
-import fbanna.chestprotection.trade.profit.ProfitInventory;
+import fbanna.chestprotection.screens.profit.ProfitInventory;
 import net.minecraft.component.Component;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;

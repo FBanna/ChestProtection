@@ -1,25 +1,18 @@
-package fbanna.chestprotection.trade.profit;
+package fbanna.chestprotection.screens.profit;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
-import fbanna.chestprotection.trade.TradeItem;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ProfitInventory extends SimpleInventory {
 

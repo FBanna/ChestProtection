@@ -1,32 +1,17 @@
-package fbanna.chestprotection.trade.setup;
+package fbanna.chestprotection.screens.setup;
 
-import com.google.gson.JsonElement;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.check.CheckChest;
-import fbanna.chestprotection.trade.TradeInventory;
 import net.minecraft.component.ComponentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.component.type.ContainerLootComponent;
-import net.minecraft.component.type.FoodComponents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-import java.awt.*;
 import java.util.*;
-import java.util.function.Predicate;
 
 public class SetupInventory extends SimpleInventory {
 

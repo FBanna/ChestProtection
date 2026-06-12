@@ -1,4 +1,4 @@
-package fbanna.chestprotection.trade.profit;
+package fbanna.chestprotection.screens.profit;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
