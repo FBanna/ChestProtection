@@ -41,7 +41,7 @@ public class MixinBreak {
 
                     SimpleGui screen = optionalScreen.get();
 
-                    screen.close();
+                    screen.onClose();
                 }
 
                 return; //break out of loop

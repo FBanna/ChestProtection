@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 @Mixin(ChestBlock.class)
 public class MixinNeighbourChest {
 
-    @ModifyVariable(method = "getStateForPlacement", at = @At(value = "STORE", ordinal = 1))
+    @ModifyVariable(method = "getStateForPlacement", at = @At(value = "STORE", ordinal = 3))
     private ChestType doubleChest(ChestType type, BlockPlaceContext ctx){
 
 

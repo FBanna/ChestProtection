@@ -38,8 +38,8 @@ public class ChestProtection implements ModInitializer {
 
         if (book.chestStatus == CheckChest.status.LOCK) {
           if (!Objects.equals(book.author, player.getName().getString())) {
-            player.sendOverlayMessage(
-                Component.translatable("Chest is locked by %s!".formatted(book.author)).withStyle(ChatFormatting.RED));
+            player.displayClientMessage(
+                Component.translatable("Chest is locked by %s!".formatted(book.author)).withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
           }
         } else if (book.chestStatus == CheckChest.status.SELL) {
@@ -57,8 +57,8 @@ public class ChestProtection implements ModInitializer {
             SimpleGui gui = new SetupScreen((ServerPlayer) player, book);
             gui.open();
           } else {
-            player.sendOverlayMessage(Component.translatable("Shop is in an error state. Contact %s!".formatted(book.author))
-                .withStyle(ChatFormatting.RED));
+            player.displayClientMessage(Component.translatable("Shop is in an error state. Contact %s!".formatted(book.author))
+                .withStyle(ChatFormatting.RED), true);
           }
 
           return InteractionResult.FAIL;
@@ -77,8 +77,8 @@ public class ChestProtection implements ModInitializer {
 
         if (book.chestStatus != CheckChest.status.CLEAR) {
           if (!Objects.equals(book.author, player.getName().getString())) {
-            player.sendOverlayMessage(
-                Component.translatable("Chest is locked by %s!".formatted(book.author)).withStyle(ChatFormatting.RED));
+            player.displayClientMessage(
+                Component.translatable("Chest is locked by %s!".formatted(book.author)).withStyle(ChatFormatting.RED), true);
             return false;
           }
         }

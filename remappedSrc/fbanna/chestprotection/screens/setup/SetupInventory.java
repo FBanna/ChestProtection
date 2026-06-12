@@ -44,9 +44,7 @@ public class SetupInventory extends SimpleContainer {
 
                 component.setCallback((index, clickType, action, gui) -> {
 
-
-
-                    if(Objects.requireNonNull(gui.getGuiElement(index)).getItemStack().getItem().equals(Items.GREEN_WOOL)) {
+                    if(Objects.requireNonNull(gui.getSlot(index)).getItemStack().getItem().equals(Items.GREEN_WOOL)) {
                         gui.setSlot(index, component.setItem(Items.RED_WOOL));
                     } else {
                         gui.setSlot(index, component.setItem(Items.GREEN_WOOL));
@@ -69,7 +67,7 @@ public class SetupInventory extends SimpleContainer {
 
                 component.setCallback((index, clickType, action, gui) -> {
 
-                    if(Objects.requireNonNull(gui.getGuiElement(index)).getItemStack().getItem().equals(Items.GREEN_WOOL)) {
+                    if(Objects.requireNonNull(gui.getSlot(index)).getItemStack().getItem().equals(Items.GREEN_WOOL)) {
                         gui.setSlot(index, component.setItem(Items.RED_WOOL));
                     } else {
                         gui.setSlot(index, component.setItem(Items.GREEN_WOOL));
@@ -102,7 +100,7 @@ public class SetupInventory extends SimpleContainer {
 
                 //ChestProtection.LOGGER.info(pos +", "+ screen.getSlot(pos).getItemStack());
 
-                if(Objects.requireNonNull(screen.getGuiElement(pos)).getItemStack().getItem().equals(Items.RED_WOOL)){
+                if(Objects.requireNonNull(screen.getSlot(pos)).getItemStack().getItem().equals(Items.RED_WOOL)){
 
                     isItem[slot] = false;
 
@@ -121,7 +119,7 @@ public class SetupInventory extends SimpleContainer {
 
                 }*/
 
-                    if(Objects.requireNonNull(screen.getGuiElement(pos)).getItemStack().getItem().equals(Items.RED_WOOL)) {
+                    if(Objects.requireNonNull(screen.getSlot(pos)).getItemStack().getItem().equals(Items.RED_WOOL)) {
                         stack.remove(type);
                     }
                     pos++;

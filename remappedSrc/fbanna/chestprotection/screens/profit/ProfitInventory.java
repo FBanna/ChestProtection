@@ -8,36 +8,25 @@ import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-//import net.minecraft.world.ContainerListener;
+import net.minecraft.world.ContainerListener;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 
-public class ProfitInventory extends SimpleContainer implements ContainerListener {
+public class ProfitInventory extends SimpleContainer {
 
     private final CheckChest trade;
     //private ServerPlayerEntity player;
 
     //public static final Codec<List<ItemStack>> inventoryCodec = ItemStack.UNCOUNTED_CODEC.listOf();
 
+    ContainerListener listener = new ContainerListener() {
         @Override
-        public void slotChanged(AbstractContainerMenu container, int slotIndex, ItemStack itemStack) {
-
-        }
-
-        @Override
-        public void dataChanged(AbstractContainerMenu container, int id, int value) {
+        public void containerChanged(Container sender) {
+            //ChestProtection.LOGGER.info("SET");
             trade.writeProfitInventory();
         }
-
-//        @Override
-//        public void containerChanged(Container sender) {
-//            //ChestProtection.LOGGER.info("SET");
-//
-//        }
+    };
 
     public String encode(){
         //DataResult<JsonElement> result = inventoryCodec.encodeStart(trade.world.getRegistryManager().getOps(JsonOps.INSTANCE), this.getHeldStacks());
@@ -77,19 +66,19 @@ public class ProfitInventory extends SimpleContainer implements ContainerListene
         return new ProfitInventory(this.trade, this.getContainerSize(), clonedStacks);
     }
 
-//    public void open(ServerPlayer player){
-//        //this.player = player;
-//        //CheckChest trade = this.trade;
-//
-//        this.addListener(listener);
-//
-//        //OPEN LOGIC
-//    }
-//
-//    public void close(){
-//        //this.player = null;
-//        this.removeListener(listener);
-//    }
+    public void open(ServerPlayer player){
+        //this.player = player;
+        //CheckChest trade = this.trade;
+
+        this.addListener(listener);
+
+        //OPEN LOGIC
+    }
+
+    public void close(){
+        //this.player = null;
+        this.removeListener(listener);
+    }
 
     /*
     public ProfitInventory(CheckChest trade, ServerPlayerEntity player, int size) {

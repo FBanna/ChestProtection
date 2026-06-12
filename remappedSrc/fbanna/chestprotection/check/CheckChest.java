@@ -274,7 +274,7 @@ public class CheckChest {
 
                                 if(result.isSuccess()){
                                     //ChestProtection.LOGGER.info(String.valueOf(stacks));
-                                    this.profitInventory = new ProfitInventory(this, 54, result.getOrThrow().allItemsCopyStream().toList());
+                                    this.profitInventory = new ProfitInventory(this, 54, result.getOrThrow().stream().toList());
                                 } else {
                                     this.profitInventory = new ProfitInventory(this, 54);
                                 }

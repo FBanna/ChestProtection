@@ -22,19 +22,17 @@ public class ProfitScreen extends SimpleGui {
 
         //this.profitInventory = new ProfitInventory(trade, player, 54);
         this.profitInventory = trade.profitInventory;
-        this.profitInventory.startOpen(player);
-        //this.profitInventory.open(player);
-
+        this.profitInventory.open(player);
 
         for(int i = 0; i<this.getSize(); i++){
-            setSlot(i, new Slot(this.profitInventory, i, 0,0));
+            setSlotRedirect(i, new Slot(this.profitInventory, i, 0,0));
         }
     }
 
     @Override
-    public void close(boolean skipSync){
+    public void onClose(){
 
-        //this.profitInventory.close();
+        this.profitInventory.close();
         this.close();
         ChestProtection.SHOPS.remove(this.trade);
 

@@ -1,6 +1,5 @@
 package fbanna.chestprotection.screens.trade;
 
-import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
@@ -38,8 +37,7 @@ public class TradeScreen extends SimpleGui {
         this.accept = new GuiElementBuilder()
                 .setItem(Items.RED_BANNER)
                 .setName(Component.nullToEmpty("NO MONEY"))
-
-                .setCallback(((index, clickType, action, s) -> {
+                .setCallback(((index, clickType, action) -> {
                     this.tradeInventory.doTrade();
                 }));
 
@@ -109,7 +107,7 @@ public class TradeScreen extends SimpleGui {
             GuiElementBuilder setup = new GuiElementBuilder()
                     .setItem(Items.PAPER)
                     .setName(Component.nullToEmpty("Setup"))
-                    .setCallback((index, clickType, action, s) -> {
+                    .setCallback((index, clickType, action) -> {
                         this.close();
 
                         SimpleGui gui = new SetupScreen(this.getPlayer(), this.trade);
@@ -119,7 +117,7 @@ public class TradeScreen extends SimpleGui {
 
             setSlot(25, setup);
 
-            tradeItems[0].setCallback((index, clickType, action, s) -> {
+            tradeItems[0].setCallback((index, clickType, action) -> {
                 //SimpleGui gui = new ProfitScreen(this.getPlayer(), this.trade);
                 this.close();
                 SimpleGui gui = new ProfitScreen(this.getPlayer(), this.trade);
@@ -128,7 +126,7 @@ public class TradeScreen extends SimpleGui {
             }).glow();
 
 
-            tradeItems[1].setCallback((index, clickType, action, s) -> {
+            tradeItems[1].setCallback((index, clickType, action) -> {
                 this.close();
 
                 //ChestBlock chestBlock = (ChestBlock) this.trade.world.getBlockState(this.trade.position).getBlock();
@@ -158,16 +156,10 @@ public class TradeScreen extends SimpleGui {
         setSlot(8, tradeItems[0]);
         setSlot(26, tradeItems[1]);
 
-
-
-
-
-
         int slotNumber = 0;
 
         while(getFirstEmptySlot() != -1){
-
-            setSlot(getFirstEmptySlot(), new Slot(tradeInventory, slotNumber, 0,0));
+            setSlotRedirect(getFirstEmptySlot(), new Slot(tradeInventory, slotNumber, 0,0));
             slotNumber++;
         }
     }
@@ -210,7 +202,7 @@ public class TradeScreen extends SimpleGui {
 
 
     @Override
-    public void close(boolean skipSync){
+    public void onClose(){
 
 
         this.tradeInventory.dropAll();

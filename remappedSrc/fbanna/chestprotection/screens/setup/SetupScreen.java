@@ -35,9 +35,8 @@ public class SetupScreen extends SimpleGui {
             setSlot(i, new ItemStack(Items.BLACK_STAINED_GLASS_PANE, 1));
         }*/
 
-
-        setSlot(18, new Slot(setupInventory, 0, 0,0));
-        setSlot(26, new Slot(setupInventory, 1, 0,0));
+        setSlotRedirect(18, new Slot(setupInventory, 0, 0,0));
+        setSlotRedirect(26, new Slot(setupInventory, 1, 0,0));
 
 
 
@@ -52,7 +51,7 @@ public class SetupScreen extends SimpleGui {
     }
 
     @Override
-    public void close(boolean skipSync){
+    public void onClose(){
 
         this.setupInventory.dropAll();
         this.close();
