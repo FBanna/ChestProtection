@@ -1,6 +1,6 @@
 package fbanna.chestprotection.mixin;
 
-import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.CheckChest;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -17,9 +17,9 @@ public class MixinNeighbourChest {
     private ChestType doubleChest(ChestType type, BlockPlaceContext ctx){
 
 
-        CheckProtected book = new CheckProtected(ctx.getClickedPos().relative(ctx.getHorizontalDirection().getOpposite().getCounterClockWise(),1), ctx.getLevel());
+        CheckChest book = new CheckChest(ctx.getClickedPos().relative(ctx.getHorizontalDirection().getOpposite().getCounterClockWise(),1), ctx.getLevel());
 
-        if(book.chestStatus != CheckProtected.ProtectedStatus.CLEAR ){
+        if(book.chestStatus != CheckChest.status.CLEAR ){
 
             if(Objects.equals(book.author, Objects.requireNonNull(ctx.getPlayer()).getName().getString())){
                 return ChestType.RIGHT;

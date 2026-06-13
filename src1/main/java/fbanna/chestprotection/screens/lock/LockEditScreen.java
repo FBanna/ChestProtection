@@ -1,16 +1,18 @@
 package fbanna.chestprotection.screens.lock;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.ChestProtection;
+import fbanna.chestprotection.protect.CheckChest;
+import fbanna.chestprotection.screens.profit.ProfitInventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 
 public class LockEditScreen extends SimpleGui {
 
-    CheckProtected trade;
+    CheckChest trade;
 
-    public LockEditScreen(ServerPlayer player, CheckProtected trade) {
+    public LockEditScreen(ServerPlayer player, CheckChest trade) {
         super(MenuType.LECTERN, player, false);
 
         this.trade = trade;

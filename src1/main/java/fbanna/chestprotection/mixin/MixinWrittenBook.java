@@ -1,12 +1,14 @@
 package fbanna.chestprotection.mixin;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.CheckChest;
 import fbanna.chestprotection.screens.lock.LockEditScreen;
+import fbanna.chestprotection.screens.setup.SetupScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import fbanna.chestprotection.ChestProtection;
 
 import java.util.Objects;
@@ -29,7 +31,7 @@ public class MixinWrittenBook {
 
         if(Objects.equals(title, "LOCK")) {
 
-            CheckProtected chest = new CheckProtected();
+            CheckChest chest = new CheckChest();
 
             SimpleGui gui = new LockEditScreen((ServerPlayer) (Object) this, chest);
 

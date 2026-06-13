@@ -1,7 +1,7 @@
 package fbanna.chestprotection.screens.setup;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.CheckChest;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
@@ -14,9 +14,9 @@ public class SetupScreen extends SimpleGui {
 
     SetupInventory setupInventory;
 
-    CheckProtected trade;
+    CheckChest trade;
 
-    public SetupScreen(ServerPlayer player, CheckProtected trade) {
+    public SetupScreen(ServerPlayer player, CheckChest trade) {
 
         super(MenuType.GENERIC_9x5, player, false);
         this.setTitle(Component.nullToEmpty("Setup"));

@@ -2,7 +2,7 @@ package fbanna.chestprotection.screens.setup;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.CheckChest;
 import java.util.*;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
@@ -15,10 +15,10 @@ import net.minecraft.world.item.Items;
 public class SetupInventory extends SimpleContainer {
 
     Player player;
-    CheckProtected trade;
+    CheckChest trade;
     SimpleGui screen;
 
-    public SetupInventory(ServerPlayer player, CheckProtected trade, SimpleGui screen){
+    public SetupInventory(ServerPlayer player, CheckChest trade, SimpleGui screen){
         super(2);
         this.player = player;
         this.trade = trade;

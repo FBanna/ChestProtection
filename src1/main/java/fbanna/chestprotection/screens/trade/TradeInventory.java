@@ -1,8 +1,8 @@
 package fbanna.chestprotection.screens.trade;
 
 import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.protect.CheckProtected;
-import fbanna.chestprotection.protect.ProfitInventory;
+import fbanna.chestprotection.protect.CheckChest;
+import fbanna.chestprotection.screens.profit.ProfitInventory;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.component.TypedDataComponent;
@@ -14,10 +14,10 @@ import net.minecraft.world.item.Items;
 public class TradeInventory extends SimpleContainer {
 
     private final TradeScreen screen;
-    private final CheckProtected trade;
+    private final CheckChest trade;
     private final ServerPlayer player;
 
-    public TradeInventory(TradeScreen screen, CheckProtected trade, ServerPlayer player, int size) {
+    public TradeInventory(TradeScreen screen, CheckChest trade, ServerPlayer player, int size) {
         super(size);
         this.screen = screen;
         this.trade = trade;
@@ -198,9 +198,9 @@ public class TradeInventory extends SimpleContainer {
 
 
 
-        for(int i = 0; i < this.trade.ProtectedInventory.getContainerSize(); i++){
-            if (ItemsEqual(this.trade.ProtectedInventory.getItem(i), this.trade.tradeItems.getProduct())){
-                productTotal += this.trade.ProtectedInventory.getItem(i).getCount();
+        for(int i = 0; i < this.trade.chestInventory.getContainerSize(); i++){
+            if (ItemsEqual(this.trade.chestInventory.getItem(i), this.trade.tradeItems.getProduct())){
+                productTotal += this.trade.chestInventory.getItem(i).getCount();
                 productSlots.add(i);
             }
         }
@@ -251,16 +251,16 @@ public class TradeInventory extends SimpleContainer {
 
                 if ( productCountdown > 0 ){
 
-                    stack = this.trade.ProtectedInventory.getItem(slot);
+                    stack = this.trade.chestInventory.getItem(slot);
                     if(productCountdown >= stack.getCount()){
                         productStacks.add(stack);
-                        this.trade.ProtectedInventory.setItem(slot, Items.AIR.getDefaultInstance());
+                        this.trade.chestInventory.setItem(slot, Items.AIR.getDefaultInstance());
                         //ChestProtection.LOGGER.info("1removed item with air from "+ slot);
                         productCountdown -= stack.getCount();
                     } else {
                         productStacks.add(stack.copyWithCount(productCountdown));
                         //this.trade.chestInventory.setStack(slot, this.trade.tradeItems.getProductStack().copyWithCount(stack.getCount() - productCountdown));
-                        this.trade.ProtectedInventory.setItem(slot, stack.copyWithCount(stack.getCount() - productCountdown));
+                        this.trade.chestInventory.setItem(slot, stack.copyWithCount(stack.getCount() - productCountdown));
                         //ChestProtection.LOGGER.info("2reduced item count from " + stack.getCount() + " to " + (stack.getCount() - productCountdown));
                         //this.trade.chestInventory.setStack(slot, new ItemStack(this.trade.product.getItem(), stack.getCount() - productCountdown));
                         productCountdown = 0;

@@ -2,7 +2,7 @@ package fbanna.chestprotection.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.CheckChest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
@@ -20,9 +20,9 @@ public abstract class MixinWither {
         //World world = ((Entity) (Object) this).getWorld();
         Level world = ((Entity) (Object) this).level();
 
-        CheckProtected book = new CheckProtected(blockPos, world);
+        CheckChest book = new CheckChest(blockPos, world);
 
-        return original && (book.chestStatus == CheckProtected.ProtectedStatus.CLEAR);
+        return original && (book.chestStatus == CheckChest.status.CLEAR);
 
     }
 }

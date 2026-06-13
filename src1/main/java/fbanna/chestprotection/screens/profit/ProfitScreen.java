@@ -2,8 +2,7 @@ package fbanna.chestprotection.screens.profit;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.protect.CheckProtected;
-import fbanna.chestprotection.protect.ProfitInventory;
+import fbanna.chestprotection.protect.CheckChest;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
@@ -11,8 +10,8 @@ import net.minecraft.world.inventory.Slot;
 
 public class ProfitScreen extends SimpleGui {
     ProfitInventory profitInventory;
-    CheckProtected trade;
-    public ProfitScreen(ServerPlayer player, CheckProtected trade) {
+    CheckChest trade;
+    public ProfitScreen(ServerPlayer player, CheckChest trade) {
         super(MenuType.GENERIC_9x6, player, false);
 
         this.trade = trade;

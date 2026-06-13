@@ -1,9 +1,10 @@
 package fbanna.chestprotection.screens.trade;
 
+import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.CheckChest;
 import fbanna.chestprotection.screens.profit.ProfitScreen;
 import fbanna.chestprotection.screens.setup.SetupScreen;
 import java.util.List;
@@ -20,14 +21,14 @@ import net.minecraft.world.item.Items;
 public class TradeScreen extends SimpleGui {
 
 
-    private final CheckProtected trade;
+    private final CheckChest trade;
     private TradeInventory tradeInventory;
 
     private final GuiElementBuilder accept;
 
 
 
-    public TradeScreen(ServerPlayer player, CheckProtected trade) {
+    public TradeScreen(ServerPlayer player, CheckChest trade) {
         super(MenuType.GENERIC_9x3, player, false);
 
         trade.setScreen(this);

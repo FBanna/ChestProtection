@@ -1,7 +1,7 @@
 package fbanna.chestprotection;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.CheckChest;
 import fbanna.chestprotection.screens.trade.TradeScreen;
 import fbanna.chestprotection.screens.setup.SetupScreen;
 import net.fabricmc.api.ModInitializer;
@@ -22,7 +22,7 @@ import java.util.Objects;
 public class ChestProtection implements ModInitializer {
   public static final Logger LOGGER = LoggerFactory.getLogger("ChestProtection");
 
-  public static List<CheckProtected> SHOPS = new ArrayList<>();
+  public static List<CheckChest> SHOPS = new ArrayList<>();
 
   @Override
   public void onInitialize() {
@@ -34,15 +34,15 @@ public class ChestProtection implements ModInitializer {
 
       if (!player.isSpectator()) {
 
-        CheckProtected book = new CheckProtected(hitResult.getBlockPos(), world);
+        CheckChest book = new CheckChest(hitResult.getBlockPos(), world);
 
-        if (book.chestStatus == CheckProtected.ProtectedStatus.LOCK) {
+        if (book.chestStatus == CheckChest.status.LOCK) {
           if (!Objects.equals(book.author, player.getName().getString())) {
             player.sendOverlayMessage(
                 Component.translatable("Chest is locked by %s!".formatted(book.author)).withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
           }
-        } else if (book.chestStatus == CheckProtected.ProtectedStatus.SELL) {
+        } else if (book.chestStatus == CheckChest.status.SELL) {
 
           SHOPS.add(book);
 
@@ -51,7 +51,7 @@ public class ChestProtection implements ModInitializer {
 
           return InteractionResult.FAIL;
 
-        } else if (book.chestStatus == CheckProtected.ProtectedStatus.ERROR) {
+        } else if (book.chestStatus == CheckChest.status.ERROR) {
 
           if (Objects.equals(book.author, player.getName().getString())) {
             SimpleGui gui = new SetupScreen((ServerPlayer) player, book);
@@ -73,9 +73,9 @@ public class ChestProtection implements ModInitializer {
     PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
       if (!player.isSpectator()) {
 
-        CheckProtected book = new CheckProtected(pos, world);
+        CheckChest book = new CheckChest(pos, world);
 
-        if (book.chestStatus != CheckProtected.ProtectedStatus.CLEAR) {
+        if (book.chestStatus != CheckChest.status.CLEAR) {
           if (!Objects.equals(book.author, player.getName().getString())) {
             player.sendOverlayMessage(
                 Component.translatable("Chest is locked by %s!".formatted(book.author)).withStyle(ChatFormatting.RED));
