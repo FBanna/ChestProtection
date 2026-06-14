@@ -3,7 +3,7 @@
   "minVersion": "0.8.5",
   "package": "fbanna.chestprotection.mixin",
   "compatibilityLevel": "JAVA_25",
-  "server": [],
+  "server": ["MixinWrittenBook"],
   "client": [],
   "injectors": {
     "defaultRequire": 1

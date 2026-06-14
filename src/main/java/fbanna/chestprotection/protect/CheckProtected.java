@@ -57,7 +57,7 @@ public abstract class CheckProtected {
 
     public CPdata cpdata;
 
-    private ItemStack stack;
+    private final ItemStack stack;
     private Container protectedInventory;
     private final ProtectedStatus status;
 
@@ -155,21 +155,21 @@ public abstract class CheckProtected {
 
         // Creating Authorisation
 
-        CPdata cpdata = getCPdata(level, tempStack);
+        CPdata cpdata = getCPdataOrGenerate(tempStack, level);
 
-        if (cpdata == null) {
-
-            CPdata newData = new CPdata(
-                    new Authorised(tempStack.get(DataComponents.WRITTEN_BOOK_CONTENT).author(), level.getServer()),
-                    Optional.empty()
-            );
-
-            writeCPdata(newData, level, tempStack);
-            tempCPdata = newData;
-
-        } else {
-            tempCPdata = cpdata;
-        }
+//        if (cpdata == null) {
+//
+//            CPdata newData = new CPdata(
+//                    new Authorised(tempStack.get(DataComponents.WRITTEN_BOOK_CONTENT).author(), level.getServer()),
+//                    Optional.empty()
+//            );
+//
+//            writeCPdata(newData, tempStack);
+//            tempCPdata = newData;
+//
+//        } else {
+//            tempCPdata = cpdata;
+//        }
 
 
         return switch (status) {
@@ -206,11 +206,72 @@ public abstract class CheckProtected {
 
     }
 
-    protected CPdata getCpdata(Level level) {
-        return getCPdata(level, this.stack);
+    /// Returns true if allowed to continue Vanilla openning
+    /// Returns false if it is needed to become a new GUI
+    public static boolean openBook(ItemStack stack, Player player, Level level) {
+
+        ProtectedStatus status = getStatus(stack);
+
+        if (status == ProtectedStatus.CLEAR) {
+            return false;
+        }
+
+        CPdata cpdata = getCPdataOrGenerate(stack, level);
+
+
+        switch (status) {
+            case ERROR -> {
+                // TODO
+                // get error state and give to player
+
+                player.sendSystemMessage(Component.literal("Book is in error state"));
+            }
+            case LOCK -> {
+                Lock.editAuthorised(player,cpdata,level.getServer());
+                return false;
+            }
+            case SELL -> {
+            }
+            case SELL_ERROR -> {
+            }
+        }
+
+        return true;
     }
 
-    private static CPdata getCPdata(Level level, ItemStack stack){
+
+    /// Must ensure that the book is NOT clear
+    ///
+    /// returns the CPdata or generates and saves it itself
+    private static CPdata getCPdataOrGenerate(ItemStack stack, Level level){
+        CPdata cpdata = getCPdata(stack);
+
+        if (cpdata == null) {
+
+
+            CPdata newData = new CPdata(
+                    new Authorised(stack.get(DataComponents.WRITTEN_BOOK_CONTENT).author(), level.getServer()),
+                    Optional.empty()
+            );
+
+            writeCPdata(newData, stack);
+            return newData;
+
+        } else {
+            return cpdata;
+        }
+
+
+    }
+
+    /// returns CPdata from given item stack. If error -> returns null
+    protected CPdata getCpdata() {
+        return getCPdata(this.stack);
+    }
+
+
+    /// returns CPdata from given item stack. If error -> returns null
+    private static CPdata getCPdata(ItemStack stack){
 
         if (!stack.has(DataComponents.CUSTOM_DATA)){
             return null;
@@ -240,13 +301,13 @@ public abstract class CheckProtected {
 
     }
 
-    protected void writeCPdata(CPdata newData, Level level){
+    protected void writeCPdata(CPdata newData){
 
-        writeCPdata(newData, level, this.stack);
+        writeCPdata(newData, this.stack);
 
     }
 
-    private static void writeCPdata(CPdata newData, Level level, ItemStack stack){
+    private static void writeCPdata(CPdata newData, ItemStack stack){
 
         stack.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, comp -> comp.update(currentNbt -> {
 
