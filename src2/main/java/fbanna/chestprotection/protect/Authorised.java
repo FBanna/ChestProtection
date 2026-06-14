@@ -1,17 +1,18 @@
 package fbanna.chestprotection.protect;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fbanna.chestprotection.ChestProtection;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.core.util.UuidUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Authorised {
 
@@ -29,29 +30,19 @@ public class Authorised {
         this.authorised = authorised;
     }
 
-    public Authorised(String name, MinecraftServer server){
+    public Authorised(String name, Level level){
 
 
-        Optional<GameProfile> optionProfile = server.services().profileResolver().fetchByName(name);
+        ServerPlayer authorPlayer = Objects.requireNonNull(level.getServer()).getPlayerList().getPlayer(name);
 
-        if (optionProfile.isEmpty()) {
-            ChestProtection.LOGGER.error("author does not exist! ERROR");
+        if (authorPlayer == null){
+            ChestProtection.LOGGER.info("author is not online for first open! ERROR");
             this.author = null;
             this.authorised = new ArrayList<>();
             return;
         }
 
-
-//        ServerPlayer authorPlayer = Objects.requireNonNull(level.getServer()).getPlayerList().getPlayer(name);
-//
-//        if (authorPlayer == null){
-//            ChestProtection.LOGGER.info("author is not online for first open! ERROR");
-//            this.author = null;
-//            this.authorised = new ArrayList<>();
-//            return;
-//        }
-
-        this.author = optionProfile.get().id();
+        this.author = authorPlayer.getUUID();
         this.authorised = new ArrayList<>();
 
 
@@ -68,7 +59,7 @@ public class Authorised {
 
     public boolean isAuthorised(UUID player){
 
-        return this.authorised.contains(player) || this.author.equals(player);
+        return this.authorised.contains(player);
 
     }
 

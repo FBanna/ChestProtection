@@ -1,9 +1,21 @@
 package fbanna.chestprotection.protect.types;
 
+import fbanna.chestprotection.protect.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.ProfitInventory;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 public class Clear extends CheckProtected {
+
+
+    public Clear(ItemStack stack, CPdata cpdata, Container protectedInventory, ProtectedStatus status) {
+        super(stack, cpdata, protectedInventory, status);
+    }
 
 //    private CheckProtected cp;
 //
@@ -14,11 +26,9 @@ public class Clear extends CheckProtected {
 //    }
 
     @Override
-    public boolean open(ServerPlayer player) {
+    public boolean open(Player player, MinecraftServer server) {
 
-        if (super.chestStatus == ProtectedStatus.LOCK){
-            return false;
-        }
+        //player.sendSystemMessage(Component.literal("all clear!"));
 
         return true;
     }

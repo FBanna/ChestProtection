@@ -9,6 +9,9 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.types.*;
 import fbanna.chestprotection.protect.types.Error;
+import fbanna.chestprotection.screens.trade.TradeItem;
+import fbanna.chestprotection.screens.trade.TradeInventory;
+import fbanna.chestprotection.screens.trade.TradeItemList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +46,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class CheckProtected {
 
-    private static final String LOCKED_TITLE = "LOCK";
+    private static final String LOCKED_TITLE = "LOCKED";
     private static final String SELL_TITLE = "SELL";
 
     public enum ProtectedStatus {
@@ -149,10 +152,6 @@ public abstract class CheckProtected {
 
         ProtectedStatus status = getStatus(tempStack);
 
-        if (status == ProtectedStatus.CLEAR){
-            return new Clear(tempStack, tempCPdata, tempProtectedInventory, ProtectedStatus.CLEAR);
-        }
-
         // Creating Authorisation
 
         CPdata cpdata = getCPdata(level, tempStack);
@@ -160,7 +159,7 @@ public abstract class CheckProtected {
         if (cpdata == null) {
 
             CPdata newData = new CPdata(
-                    new Authorised(tempStack.get(DataComponents.WRITTEN_BOOK_CONTENT).author(), level.getServer()),
+                    new Authorised(tempStack.get(DataComponents.WRITTEN_BOOK_CONTENT).author(), level),
                     Optional.empty()
             );
 

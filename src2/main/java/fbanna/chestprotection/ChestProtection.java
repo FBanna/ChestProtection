@@ -2,7 +2,8 @@ package fbanna.chestprotection;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.protect.CheckProtected;
-
+import fbanna.chestprotection.screens.trade.TradeScreen;
+import fbanna.chestprotection.screens.setup.SetupScreen;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;

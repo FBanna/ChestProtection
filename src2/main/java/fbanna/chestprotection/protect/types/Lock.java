@@ -29,7 +29,7 @@ public class Lock extends CheckProtected {
     @Override
     public boolean open(Player player, MinecraftServer server) {
 
-        //ChestProtection.LOGGER.info("I want to lock this");
+        ChestProtection.LOGGER.info("I want to lock this");
 
         Authorised authorised = this.cpdata.getAuthorised();
 

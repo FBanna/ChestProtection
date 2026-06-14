@@ -27,7 +27,7 @@ public class ProfitInventory extends SimpleContainer implements ContainerListene
 
         @Override
         public void dataChanged(AbstractContainerMenu container, int id, int value) {
-            //trade.writeProfitInventory();
+            trade.writeProfitInventory();
         }
 
 //        @Override
@@ -36,16 +36,16 @@ public class ProfitInventory extends SimpleContainer implements ContainerListene
 //
 //        }
 
-//    public String encode(){
-//        //DataResult<JsonElement> result = inventoryCodec.encodeStart(trade.world.getRegistryManager().getOps(JsonOps.INSTANCE), this.getHeldStacks());
-//        DataResult<JsonElement> result = ItemContainerContents.CODEC.encodeStart(trade.world.registryAccess().createSerializationContext(JsonOps.INSTANCE), ItemContainerContents.fromItems(this.getItems()));
-//
-//        if(result.isSuccess()) {
-//
-//            return result.getOrThrow().toString();
-//        }
-//        return "";
-//    }
+    public String encode(){
+        //DataResult<JsonElement> result = inventoryCodec.encodeStart(trade.world.getRegistryManager().getOps(JsonOps.INSTANCE), this.getHeldStacks());
+        DataResult<JsonElement> result = ItemContainerContents.CODEC.encodeStart(trade.world.registryAccess().createSerializationContext(JsonOps.INSTANCE), ItemContainerContents.fromItems(this.getItems()));
+
+        if(result.isSuccess()) {
+
+            return result.getOrThrow().toString();
+        }
+        return "";
+    }
 
 
     public ProfitInventory(CheckProtected trade, int size, List<ItemStack> stacks) {
