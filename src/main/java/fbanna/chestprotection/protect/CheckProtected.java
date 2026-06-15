@@ -155,7 +155,7 @@ public abstract class CheckProtected {
 
         // Creating Authorisation
 
-        CPdata cpdata = getCPdataOrGenerate(tempStack, level);
+        tempCPdata = getCPdataOrGenerate(tempStack, level);
 
 //        if (cpdata == null) {
 //

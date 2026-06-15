@@ -9,9 +9,9 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.types.*;
 import fbanna.chestprotection.protect.types.Error;
-import fbanna.chestprotection.screens.trade.TradeItem;
-import fbanna.chestprotection.screens.trade.TradeInventory;
-import fbanna.chestprotection.screens.trade.TradeItemList;
+import fbanna.chestprotection.ui.trade.TradeItem;
+import fbanna.chestprotection.ui.trade.TradeInventory;
+import fbanna.chestprotection.ui.trade.TradeItemList;
 
 import java.util.ArrayList;
 import java.util.List;

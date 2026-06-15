@@ -1,4 +1,4 @@
-package fbanna.chestprotection.screens.trade;
+package fbanna.chestprotection.ui.trade;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

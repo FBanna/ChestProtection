@@ -2,7 +2,7 @@ package fbanna.chestprotection.mixin;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.protect.CheckProtected;
-import fbanna.chestprotection.screens.lock.LockEditScreen;
+import fbanna.chestprotection.ui.lock.LockEditScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

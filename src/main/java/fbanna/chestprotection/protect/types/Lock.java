@@ -1,11 +1,10 @@
 package fbanna.chestprotection.protect.types;
 
 import com.mojang.authlib.GameProfile;
-import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.protect.Authorised;
 import fbanna.chestprotection.protect.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
-import fbanna.chestprotection.screens.lock.editAuthorised;
+import fbanna.chestprotection.ui.lock.editAuthorised;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -72,7 +71,7 @@ public class Lock extends CheckProtected {
 
 
 
-        SimpleGui gui = new editAuthorised((ServerPlayer) player);
+        editAuthorised gui = new editAuthorised((ServerPlayer) player, cpdata);
         gui.open();
 
 

@@ -1,8 +1,8 @@
-package fbanna.chestprotection.screens.trade;
+package fbanna.chestprotection.ui.trade;
 
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.CheckChest;
-import fbanna.chestprotection.screens.profit.ProfitInventory;
+import fbanna.chestprotection.ui.profit.ProfitInventory;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.component.TypedDataComponent;

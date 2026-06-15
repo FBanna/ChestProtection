@@ -1,4 +1,4 @@
-package fbanna.chestprotection.screens.lock;
+package fbanna.chestprotection.ui.lock;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.protect.CheckProtected;

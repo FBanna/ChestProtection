@@ -1,9 +1,9 @@
-package fbanna.chestprotection.screens.lock;
+package fbanna.chestprotection.ui.lock;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.CheckChest;
-import fbanna.chestprotection.screens.profit.ProfitInventory;
+import fbanna.chestprotection.ui.profit.ProfitInventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;

@@ -1,4 +1,4 @@
-package fbanna.chestprotection.screens.trade;
+package fbanna.chestprotection.ui.trade;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package fbanna.chestprotection.screens.profit;
+package fbanna.chestprotection.ui.profit;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.DataResult;

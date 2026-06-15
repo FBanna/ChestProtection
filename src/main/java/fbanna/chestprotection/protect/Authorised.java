@@ -15,8 +15,8 @@ import java.util.*;
 
 public class Authorised {
 
-    private final UUID author;
-    private final List<UUID> authorised;
+    private UUID author;
+    private ArrayList<UUID> authorised;
 
     public static final MapCodec<Authorised> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             UUIDUtil.CODEC.fieldOf("author").forGetter(Authorised::getAuthor),
@@ -24,9 +24,14 @@ public class Authorised {
     ).apply(instance, Authorised::new));
 
 
-    public Authorised(UUID author, List<UUID> authorised){
+    public Authorised(UUID author, ArrayList<UUID> authorised){
         this.author = author;
         this.authorised = authorised;
+    }
+
+    public Authorised(UUID author, List<UUID> authorised){
+        this.author = author;
+        this.authorised = new ArrayList<>(authorised);
     }
 
     public Authorised(String name, MinecraftServer server){
@@ -62,7 +67,7 @@ public class Authorised {
         return this.author;
     }
 
-    public List<UUID> getAuthorised() {
+    public ArrayList<UUID> getAuthorised() {
         return this.authorised;
     }
 

@@ -1,4 +1,4 @@
-package fbanna.chestprotection.screens.setup;
+package fbanna.chestprotection.ui.setup;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
