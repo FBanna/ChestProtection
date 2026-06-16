@@ -59,7 +59,7 @@ public class EditAuthorised extends AnvilInputGui {
 
         if (this.searchedPlayerResult == null) {
 
-            this.setSlot(2, new GuiElementBuilder(Items.GRAY_WOOL)
+            this.setSlot(2, new GuiElementBuilder(Items.WOOL.gray())
                     .setName(Component.literal("Could not find player!").withStyle(ChatFormatting.RED))
                     .hideDefaultTooltip());
 
@@ -77,7 +77,7 @@ public class EditAuthorised extends AnvilInputGui {
 
             else if (this.cp.cpdata.getAuthorised().isAuthorised(this.searchedPlayerResult.id())) {
 
-                this.setSlot(2, new GuiElementBuilder(Items.RED_WOOL)
+                this.setSlot(2, new GuiElementBuilder(Items.WOOL.red())
                         .setName(Component.literal("Deauthorise %s?".formatted(this.searchedPlayerResult.name())))
                         .setCallback(() -> {
 
@@ -90,7 +90,7 @@ public class EditAuthorised extends AnvilInputGui {
 
             } else {
 
-                this.setSlot(2, new GuiElementBuilder(Items.GREEN_WOOL)
+                this.setSlot(2, new GuiElementBuilder(Items.WOOL.green())
                         .setName(Component.literal("Authorise %s?".formatted(this.searchedPlayerResult.name())))
                         .setCallback(() -> {
                             ChestProtection.LOGGER.info("authorised %s".formatted(this.searchedPlayerResult.name()));
