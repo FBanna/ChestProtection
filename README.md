@@ -1,3 +1,5 @@
+**In the midst of rewriting this mod to allow for new features!**
+
 **CHEST PROTECTION**
 
 Easy to use, vanilla friendly, fully server side trading and locking fabric mod for modern versions of Minecraft
