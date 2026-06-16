@@ -1,30 +1,25 @@
-package fbanna.chestprotection.protect.types;
+package fbanna.chestprotection.protect.types.Sell;
 
-import fbanna.chestprotection.protect.Authorised;
 import fbanna.chestprotection.protect.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class Error extends CheckProtected {
+public class SellBook extends CheckProtected {
 
 
-    public Error(ItemStack stack, CPdata cpdata, ProtectedStatus status) {
+    public SellBook(ItemStack stack, CPdata cpdata, ProtectedStatus status) {
         super(stack, cpdata, status);
     }
 
     @Override
     public boolean open(Player player, MinecraftServer server) {
 
-        player
-            .sendOverlayMessage(Component.literal("Chest is in error state!")
-            .withStyle(ChatFormatting.RED));
-
+        player.sendOverlayMessage(Component.literal("TODO!")
+                .withStyle(ChatFormatting.RED));
 
         return false;
     }

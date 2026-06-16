@@ -1,22 +1,17 @@
 package fbanna.chestprotection;
 
-import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.protect.CheckProtected;
 
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ChestProtection implements ModInitializer {
   public static final Logger LOGGER = LoggerFactory.getLogger("ChestProtection");
@@ -32,7 +27,7 @@ public class ChestProtection implements ModInitializer {
     UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
 
 
-      boolean result = CheckProtected.create(hitResult.getBlockPos(), world).open(player, world.getServer());
+      boolean result = CheckProtected.createContainerOpen(hitResult.getBlockPos(), world).open(player, world.getServer());
 
       if (result) {
         return InteractionResult.PASS;
@@ -81,7 +76,7 @@ public class ChestProtection implements ModInitializer {
 
     PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
 
-      boolean result = CheckProtected.create(pos, world).playerBreak(player, world.getServer());
+      boolean result = CheckProtected.createContainerOpen(pos, world).playerBreak(player, world.getServer());
 
       return result;
 //      if (!player.isSpectator()) {

@@ -1,46 +1,49 @@
 package fbanna.chestprotection.ui.lock;
 
 
-import com.mojang.authlib.GameProfile;
-
+import com.mojang.authlib.GameProfileRepository;
+import com.mojang.authlib.yggdrasil.response.NameAndId;
 import eu.pb4.sgui.api.SguiUtils;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.AnvilInputGui;
-import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.CPdata;
-import fbanna.chestprotection.protect.types.Lock;
+import fbanna.chestprotection.protect.types.Lock.LockBook;
+import fbanna.chestprotection.util.CustomProfileRepository;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.NameAndId;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.Items;
-import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
-import java.util.UUID;
+import net.minecraft.world.item.Items;
+
 import java.util.concurrent.CompletableFuture;
 
-import static fbanna.chestprotection.ui.ControlTextures.ERROR_PLAYER;
 import static fbanna.chestprotection.ui.ControlTextures.GUI_QUESTION_MARK;
 
-public class editAuthorised extends AnvilInputGui {
+public class EditAuthorised extends AnvilInputGui {
 
-    CPdata cpdata;
+    LockBook cp;
 
-    NameAndId searchedPlayer = null;
-
-
-
-
+    String searchedName = "";
+    NameAndId searchedPlayerResult = null;
+    GameProfileRepository profileRepo;
 
 
-    public editAuthorised(ServerPlayer player, CPdata cpdata) {
+
+
+
+
+    public EditAuthorised(ServerPlayer player, LockBook cp) {
         super(player, true);
         super.setTitle(Component.literal("Edit Authorisation"));
-        this.searchedPlayer = null;
-        this.cpdata = cpdata;
+        this.searchedPlayerResult = null;
+        this.searchedName = "";
+        this.cp = cp;
+
+        MinecraftServer server = player.level().getServer();
+
+        this.profileRepo = new CustomProfileRepository(server.getProxy());
 
         //updateSearchedPlayerResult();
 
@@ -54,22 +57,32 @@ public class editAuthorised extends AnvilInputGui {
     private void updateSearchedPlayerResult() {
         //this.updateBack();
 
-        if (this.searchedPlayer == null) {
+        if (this.searchedPlayerResult == null) {
 
             this.setSlot(2, new GuiElementBuilder(Items.GRAY_WOOL)
-                    .setName(Component.literal("Could not find player!"))
+                    .setName(Component.literal("Could not find player!").withStyle(ChatFormatting.RED))
                     .hideDefaultTooltip());
 
         } else {
 
-            if (this.cpdata.getAuthorised().isAuthorised(this.searchedPlayer.id())) {
+            if (this.cp.cpdata.getAuthorised().isAuthor(this.searchedPlayerResult.id())) {
+
+
+                this.setSlot(2, new GuiElementBuilder(Items.BARRIER)
+                        .setName(Component.literal("Cannot deauthorise author!").withStyle(ChatFormatting.RED))
+                        .hideDefaultTooltip());
+
+
+            }
+
+            else if (this.cp.cpdata.getAuthorised().isAuthorised(this.searchedPlayerResult.id())) {
 
                 this.setSlot(2, new GuiElementBuilder(Items.RED_WOOL)
-                        .setItemName(Component.literal("Deauthorise %s?".formatted(this.searchedPlayer.name())))
+                        .setName(Component.literal("Deauthorise %s?".formatted(this.searchedPlayerResult.name())))
                         .setCallback(() -> {
 
-                            ChestProtection.LOGGER.info("deauthroised %s".formatted(this.searchedPlayer.name()));
-                            this.cpdata.getAuthorised().removeAuthorised(this.searchedPlayer.id());
+                            ChestProtection.LOGGER.info("deauthroised %s".formatted(this.searchedPlayerResult.name()));
+                            this.cp.removeAuthorised(this.searchedPlayerResult.id());
 
                             updateSearchedPlayerResult();
                         })
@@ -78,10 +91,10 @@ public class editAuthorised extends AnvilInputGui {
             } else {
 
                 this.setSlot(2, new GuiElementBuilder(Items.GREEN_WOOL)
-                        .setItemName(Component.literal("Authorise %s?".formatted(this.searchedPlayer.name())))
+                        .setName(Component.literal("Authorise %s?".formatted(this.searchedPlayerResult.name())))
                         .setCallback(() -> {
-                            ChestProtection.LOGGER.info("authorised %s".formatted(this.searchedPlayer.name()));
-                            this.cpdata.getAuthorised().addAuthorised(this.searchedPlayer.id());
+                            ChestProtection.LOGGER.info("authorised %s".formatted(this.searchedPlayerResult.name()));
+                            this.cp.addAuthorised(this.searchedPlayerResult.id());
 
                             updateSearchedPlayerResult();
                         })
@@ -105,27 +118,31 @@ public class editAuthorised extends AnvilInputGui {
                     .setProfileSkinTexture(GUI_QUESTION_MARK));
 
 
-            this.searchedPlayer = null;
+            this.searchedPlayerResult = null;
             updateSearchedPlayerResult();
             return;
         }
 
         ChestProtection.LOGGER.info("updating the player search field!");
-        ChestProtection.LOGGER.info(this.cpdata.authorised.getAuthorised().toString());
+        ChestProtection.LOGGER.info(this.cp.cpdata.authorised.getAuthorised().toString());
 
-        //this.player.level().getServer().services().profileRepository().findProfileByName("")
 
-        CompletableFuture.supplyAsync(() -> this.player.level().getServer().services().nameToIdCache().get(playerName)).thenAccept((potentialProfile) -> {
+        CompletableFuture.supplyAsync(() -> this.profileRepo.findProfileByName(playerName)).thenAccept((potentialProfile) -> {
             this.player.level().getServer().execute(() -> {
+
+                if (playerName != this.searchedName) {
+                    ChestProtection.LOGGER.info("WE JUST EXPERIENCED A COLLISION!");
+                    return;
+                }
 
 
                 if (potentialProfile.isEmpty()) {
                     this.setSlot(1, new GuiElementBuilder(Items.PLAYER_HEAD)
-                            .setItemName(Component.literal("Could not find player!").withStyle(ChatFormatting.RED))
+                            .setName(Component.literal("Could not find player!").withStyle(ChatFormatting.RED))
                             .hideDefaultTooltip()
                             .setProfileSkinTexture(GUI_QUESTION_MARK));
 
-                    this.searchedPlayer = null;
+                    this.searchedPlayerResult = null;
 
 
                 } else {
@@ -134,12 +151,12 @@ public class editAuthorised extends AnvilInputGui {
 
 
                     this.setSlot(1, new GuiElementBuilder(Items.PLAYER_HEAD)
-                            .setItemName(Component.literal(profile.name()))
+                            .setName(Component.literal(profile.name()))
                             .hideDefaultTooltip()
                             .setProfile(profile.id())
                     );
 
-                    searchedPlayer = profile;
+                    searchedPlayerResult = profile;
 
                 }
 
@@ -162,6 +179,7 @@ public class editAuthorised extends AnvilInputGui {
     @Override
     public void onInput(String input) {
         super.onInput(input);
+        this.searchedName = input;
 
         updateSearchedPlayer(input);
         //updateSearchedPlayerResult();

@@ -1,15 +1,15 @@
-package fbanna.chestprotection.protect.types;
+package fbanna.chestprotection.protect.types.Lock;
 
 import com.mojang.authlib.GameProfile;
 import fbanna.chestprotection.protect.Authorised;
 import fbanna.chestprotection.protect.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
-import fbanna.chestprotection.ui.lock.editAuthorised;
+import fbanna.chestprotection.ui.lock.EditAuthorised;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -18,8 +18,8 @@ import java.util.Optional;
 
 public class Lock extends CheckProtected {
 
-    public Lock(ItemStack stack, CPdata cpdata, Container protectedInventory, ProtectedStatus status) {
-        super(stack, cpdata, protectedInventory, status);
+    public Lock(ItemStack stack, CPdata cpdata, ProtectedStatus status) {
+        super(stack, cpdata, status);
     }
 
     @Override
@@ -49,34 +49,34 @@ public class Lock extends CheckProtected {
 
 
 
-    /// Funtion to open screen to edit Authorised players
-    public static void editAuthorised(Player player, CPdata cpdata, MinecraftServer server) {
-
-        Authorised authorised = cpdata.getAuthorised();
-
-
-        if (!authorised.isAuthorised(player.getUUID())) {
-
-            Optional<GameProfile> authorProfileOption = server.services().profileResolver().fetchById(authorised.getAuthor());
-
-            if (authorProfileOption.isEmpty()) {
-                return;
-            }
-
-            player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorProfileOption.get().name()))
-                .withStyle(ChatFormatting.RED));
-
-            return;
-        }
-
-
-
-        editAuthorised gui = new editAuthorised((ServerPlayer) player, cpdata);
-        gui.open();
-
-
-
-    }
+//    /// Funtion to open screen to edit Authorised players
+//    public static void editAuthorised(Player player, CPdata cpdata, MinecraftServer server) {
+//
+//        Authorised authorised = cpdata.getAuthorised();
+//
+//
+//        if (!authorised.isAuthorised(player.getUUID())) {
+//
+//            Optional<NameAndId> authorProfileOption = server.services().nameToIdCache().get(authorised.getAuthor());
+//
+//            if (authorProfileOption.isEmpty()) {
+//                return;
+//            }
+//
+//            player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorProfileOption.get().name()))
+//                .withStyle(ChatFormatting.RED));
+//
+//            return;
+//        }
+//
+//
+//
+//        EditAuthorised gui = new EditAuthorised((ServerPlayer) player, cpdata);
+//        gui.open();
+//
+//
+//
+//    }
 
 
 }

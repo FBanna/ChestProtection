@@ -8,6 +8,7 @@ import fbanna.chestprotection.ChestProtection;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.core.util.UuidUtil;
 
@@ -24,20 +25,19 @@ public class Authorised {
     ).apply(instance, Authorised::new));
 
 
-    public Authorised(UUID author, ArrayList<UUID> authorised){
+    private Authorised(UUID author, ArrayList<UUID> authorised){
         this.author = author;
         this.authorised = authorised;
     }
 
-    public Authorised(UUID author, List<UUID> authorised){
+    private Authorised(UUID author, List<UUID> authorised){
         this.author = author;
         this.authorised = new ArrayList<>(authorised);
     }
 
     public Authorised(String name, MinecraftServer server){
 
-
-        Optional<GameProfile> optionProfile = server.services().profileResolver().fetchByName(name);
+        Optional<NameAndId> optionProfile = server.services().nameToIdCache().get(name);
 
         if (optionProfile.isEmpty()) {
             ChestProtection.LOGGER.error("author does not exist! ERROR");
@@ -77,6 +77,10 @@ public class Authorised {
 
     }
 
+    public boolean isAuthor(UUID player) {
+        return this.author.equals(player);
+    }
+
     public void addAuthorised(UUID player){
         this.authorised.add(player);
     }
@@ -84,6 +88,7 @@ public class Authorised {
     public void removeAuthorised(UUID player){
         this.authorised.remove(player);
     }
+
 
 
 

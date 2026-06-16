@@ -1,20 +1,16 @@
 package fbanna.chestprotection.protect;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
-import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.types.*;
 import fbanna.chestprotection.protect.types.Error;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
+import fbanna.chestprotection.protect.types.Lock.Lock;
+import fbanna.chestprotection.protect.types.Lock.LockBook;
+import fbanna.chestprotection.protect.types.Sell.Sell;
+import fbanna.chestprotection.protect.types.Sell.SellBook;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -23,22 +19,17 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.Filterable;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.WrittenBookItem;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class CheckProtected {
@@ -58,7 +49,7 @@ public abstract class CheckProtected {
     public CPdata cpdata;
 
     private final ItemStack stack;
-    private Container protectedInventory;
+    //private Container protectedInventory;
     private final ProtectedStatus status;
 
 
@@ -79,6 +70,9 @@ public abstract class CheckProtected {
 //    private SimpleGui screen = null;
 //
 
+
+    /// Returns true if allowed to continue Vanilla openning
+    /// Returns false if it is needed to become a new GUI (or other)
     public abstract boolean open(Player player, MinecraftServer server);
 
     public boolean playerBreak(Player player, MinecraftServer server) {
@@ -93,7 +87,8 @@ public abstract class CheckProtected {
         }
 
 
-        Optional<GameProfile> authorProfileOption = server.services().profileResolver().fetchById(authorised.getAuthor());
+        Optional<NameAndId> authorProfileOption = server.services().nameToIdCache().get(authorised.getAuthor());
+
 
         if (authorProfileOption.isEmpty()) {
             return true;
@@ -110,17 +105,81 @@ public abstract class CheckProtected {
 
     }
 
-    public CheckProtected(ItemStack stack, CPdata cpdata, Container protectedInventory, ProtectedStatus status){
+    public CheckProtected(ItemStack stack, CPdata cpdata, ProtectedStatus status){
 
         this.stack = stack;
         this.cpdata = cpdata;
-        this.protectedInventory = protectedInventory;
+        //this.protectedInventory = protectedInventory;
         this.status = status;
 
     }
 
+//    /// Returns true if allowed to continue Vanilla openning
+//    /// Returns false if it is needed to become a new GUI
+//    public static boolean openBook(ItemStack stack, Player player, Level level) {
+//
+//        ProtectedStatus status = getStatus(stack);
+//
+//        if (status == ProtectedStatus.CLEAR) {
+//            return false;
+//        }
+//
+//        CPdata cpdata = getCPdataOrGenerate(stack, level);
+//
+//
+//        switch (status) {
+//            case ERROR -> {
+//                // TODO
+//                // get error state and give to player
+//
+//                player.sendSystemMessage(Component.literal("Book is in error state"));
+//            }
+//            case LOCK -> {
+//                Lock.editAuthorised(player,cpdata,level.getServer());
+//                return false;
+//            }
+//            case SELL -> {
+//            }
+//            case SELL_ERROR -> {
+//            }
+//        }
+//
+//        return true;
+//    }
 
-    public static CheckProtected create(BlockPos position, Level level) {
+    public static CheckProtected createBookOpen(ItemStack stack, Level level) {
+        ProtectedStatus status = getStatus(stack);
+
+        if (status == ProtectedStatus.CLEAR) {
+            return new Clear(stack);
+        }
+
+        CPdata cpdata = getCPdataOrGenerate(stack, level);
+
+        switch (status) {
+            case ERROR -> {
+                return new Error(stack, cpdata, status);
+            }
+            case LOCK -> {
+                return new LockBook(stack, cpdata, status);
+            }
+            case SELL -> {
+
+                return new SellBook(stack, cpdata, status);
+
+            }
+            case SELL_ERROR -> {
+
+                // TODO
+
+                return new SellBook(stack, cpdata, status);
+            }
+        }
+        return new Clear(stack);
+    }
+
+
+    public static CheckProtected createContainerOpen(BlockPos position, Level level) {
 
         Container tempProtectedInventory = null;
         ItemStack tempStack = null;
@@ -136,11 +195,11 @@ public abstract class CheckProtected {
         Block block = state.getBlock();
 
         if (!(entity instanceof Container)){
-            return new Clear(tempStack, tempCPdata, tempProtectedInventory, ProtectedStatus.CLEAR);
+            return new Clear(tempStack);
         }
 
         if(block != Blocks.CHEST && block != Blocks.BARREL){
-            return new Clear(tempStack, tempCPdata, tempProtectedInventory, ProtectedStatus.CLEAR);
+            return new Clear(tempStack);
         }
 
         tempProtectedInventory = (Container) entity;
@@ -150,7 +209,7 @@ public abstract class CheckProtected {
         ProtectedStatus status = getStatus(tempStack);
 
         if (status == ProtectedStatus.CLEAR){
-            return new Clear(tempStack, tempCPdata, tempProtectedInventory, ProtectedStatus.CLEAR);
+            return new Clear(tempStack);
         }
 
         // Creating Authorisation
@@ -173,11 +232,11 @@ public abstract class CheckProtected {
 
 
         return switch (status) {
-            case CLEAR -> new Clear(tempStack, tempCPdata, tempProtectedInventory, status);
-            case ERROR -> new Error(tempStack, tempCPdata, tempProtectedInventory, status);
-            case LOCK -> new Lock(tempStack, tempCPdata, tempProtectedInventory, status);
+            case CLEAR -> new Clear(tempStack);
+            case ERROR -> new Error(tempStack, tempCPdata, status);
+            case LOCK -> new Lock(tempStack, tempCPdata, status);
             case SELL -> new Sell(tempStack, tempCPdata, tempProtectedInventory, status);
-            case SELL_ERROR -> new SellError(tempStack, tempCPdata, tempProtectedInventory, status);
+            case SELL_ERROR -> new SellError(tempStack, tempCPdata, status);
         };
 
 
@@ -204,39 +263,6 @@ public abstract class CheckProtected {
             default -> ProtectedStatus.CLEAR;
         };
 
-    }
-
-    /// Returns true if allowed to continue Vanilla openning
-    /// Returns false if it is needed to become a new GUI
-    public static boolean openBook(ItemStack stack, Player player, Level level) {
-
-        ProtectedStatus status = getStatus(stack);
-
-        if (status == ProtectedStatus.CLEAR) {
-            return false;
-        }
-
-        CPdata cpdata = getCPdataOrGenerate(stack, level);
-
-
-        switch (status) {
-            case ERROR -> {
-                // TODO
-                // get error state and give to player
-
-                player.sendSystemMessage(Component.literal("Book is in error state"));
-            }
-            case LOCK -> {
-                Lock.editAuthorised(player,cpdata,level.getServer());
-                return false;
-            }
-            case SELL -> {
-            }
-            case SELL_ERROR -> {
-            }
-        }
-
-        return true;
     }
 
 
@@ -305,6 +331,10 @@ public abstract class CheckProtected {
 
         writeCPdata(newData, this.stack);
 
+    }
+
+    protected void writeCPdata() {
+        writeCPdata(this.cpdata, this.stack);
     }
 
     private static void writeCPdata(CPdata newData, ItemStack stack){

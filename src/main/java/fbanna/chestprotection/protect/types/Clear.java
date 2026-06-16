@@ -13,8 +13,8 @@ import net.minecraft.world.item.ItemStack;
 public class Clear extends CheckProtected {
 
 
-    public Clear(ItemStack stack, CPdata cpdata, Container protectedInventory, ProtectedStatus status) {
-        super(stack, cpdata, protectedInventory, status);
+    public Clear(ItemStack stack) {
+        super(stack, null, ProtectedStatus.CLEAR);
     }
 
 //    private CheckProtected cp;

@@ -60,7 +60,9 @@ public class MixinWrittenBook extends Item {
     @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;", shift = At.Shift.BY, by = 2), cancellable = true)
     private void inject(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir, @Local(name = "itemStack") ItemStack itemStack) {
 
-        boolean result = CheckProtected.openBook(itemStack, player, level);
+        //boolean result = CheckProtected.openBook(itemStack, player, level);
+
+        boolean result = CheckProtected.createBookOpen(itemStack, level).open(player, level.getServer());
 
         if (!result){
 
