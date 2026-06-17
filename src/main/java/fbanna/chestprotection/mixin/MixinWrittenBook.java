@@ -57,7 +57,7 @@ public class MixinWrittenBook extends Item {
         super(properties);
     }
 
-    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;", shift = At.Shift.BY, by = 2), cancellable = true)
+    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;openItemGui(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)V", shift = At.Shift.BEFORE), cancellable = true)
     private void inject(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir, @Local(name = "itemStack") ItemStack itemStack) {
 
         //boolean result = CheckProtected.openBook(itemStack, player, level);
@@ -66,7 +66,7 @@ public class MixinWrittenBook extends Item {
 
         if (!result){
 
-            ChestProtection.LOGGER.info("Openning edit page!");
+            //ChestProtection.LOGGER.info("Openning edit page!");
             cir.setReturnValue(InteractionResult.SUCCESS);
         }
 

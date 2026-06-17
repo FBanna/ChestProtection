@@ -11,7 +11,7 @@ base {
 }
 
 repositories {
-	maven { url 'https://maven.nucleoid.xyz' }
+	maven { url = 'https://maven.nucleoid.xyz' }
 }
 
 loom {

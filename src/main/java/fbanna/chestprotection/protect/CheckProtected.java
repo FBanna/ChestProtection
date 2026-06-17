@@ -6,6 +6,7 @@ import fbanna.chestprotection.protect.types.*;
 import fbanna.chestprotection.protect.types.Error;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import fbanna.chestprotection.protect.types.Lock.Lock;
 import fbanna.chestprotection.protect.types.Lock.LockBook;
@@ -53,22 +54,6 @@ public abstract class CheckProtected {
     private final ProtectedStatus status;
 
 
-//    private Level  world;
-//    private BlockPos position;
-
-
-
-
-
-
-//    public ProfitInventory profitInventory;
-//    public TradeItemList tradeItems;
-
-    //private WrittenBookContentComponent book;
-
-//
-//    private SimpleGui screen = null;
-//
 
 
     /// Returns true if allowed to continue Vanilla openning
@@ -114,38 +99,6 @@ public abstract class CheckProtected {
 
     }
 
-//    /// Returns true if allowed to continue Vanilla openning
-//    /// Returns false if it is needed to become a new GUI
-//    public static boolean openBook(ItemStack stack, Player player, Level level) {
-//
-//        ProtectedStatus status = getStatus(stack);
-//
-//        if (status == ProtectedStatus.CLEAR) {
-//            return false;
-//        }
-//
-//        CPdata cpdata = getCPdataOrGenerate(stack, level);
-//
-//
-//        switch (status) {
-//            case ERROR -> {
-//                // TODO
-//                // get error state and give to player
-//
-//                player.sendSystemMessage(Component.literal("Book is in error state"));
-//            }
-//            case LOCK -> {
-//                Lock.editAuthorised(player,cpdata,level.getServer());
-//                return false;
-//            }
-//            case SELL -> {
-//            }
-//            case SELL_ERROR -> {
-//            }
-//        }
-//
-//        return true;
-//    }
 
     public static CheckProtected createBookOpen(ItemStack stack, Level level) {
         ProtectedStatus status = getStatus(stack);
@@ -353,6 +306,19 @@ public abstract class CheckProtected {
 
 
     }
+
+    public void addAuthorised(UUID player){
+        this.cpdata.getAuthorised().addAuthorised(player);
+        this.writeCPdata();
+    }
+
+
+    public void removeAuthorised(UUID player){
+        this.cpdata.getAuthorised().removeAuthorised(player);
+        this.writeCPdata();
+    }
+
+
 
 //
 //    public CheckProtected(BlockPos position, Level world) {

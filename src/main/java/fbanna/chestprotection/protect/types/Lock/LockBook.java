@@ -49,15 +49,6 @@ public class LockBook extends CheckProtected {
         return false;
     }
 
-    public void addAuthorised(UUID player){
-        this.cpdata.getAuthorised().addAuthorised(player);
-        this.writeCPdata();
-    }
 
-
-    public void removeAuthorised(UUID player){
-        this.cpdata.getAuthorised().removeAuthorised(player);
-        this.writeCPdata();
-    }
 
 }

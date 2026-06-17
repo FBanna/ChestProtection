@@ -18,6 +18,7 @@ public class ChestProtection implements ModInitializer {
 
   public static List<CheckProtected> SHOPS = new ArrayList<>();
 
+
   @Override
   public void onInitialize() {
 
