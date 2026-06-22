@@ -1,10 +1,8 @@
-package fbanna.chestprotection.protect;
-
-import com.google.gson.JsonElement;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
+package fbanna.chestprotection.protect.types.Sell;
 
 import java.util.List;
+
+import fbanna.chestprotection.protect.CheckProtected;
 import net.minecraft.core.NonNullList;
 //import net.minecraft.world.ContainerListener;
 import net.minecraft.world.SimpleContainer;

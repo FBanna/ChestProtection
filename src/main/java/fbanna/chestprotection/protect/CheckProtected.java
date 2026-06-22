@@ -5,6 +5,7 @@ import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.types.*;
 import fbanna.chestprotection.protect.types.Error;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,8 +13,11 @@ import fbanna.chestprotection.protect.types.Lock.Lock;
 import fbanna.chestprotection.protect.types.Lock.LockBook;
 import fbanna.chestprotection.protect.types.Sell.Sell;
 import fbanna.chestprotection.protect.types.Sell.SellBook;
+import fbanna.chestprotection.protect.types.Sell.SellData;
+import fbanna.chestprotection.protect.types.Sell.TradeItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -22,10 +26,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.WrittenBookItem;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -42,8 +49,8 @@ public abstract class CheckProtected {
         CLEAR,
         ERROR,
         LOCK,
-        SELL,
-        SELL_ERROR
+        SELL
+//        SELL_ERROR
     }
 
 
@@ -60,6 +67,9 @@ public abstract class CheckProtected {
     /// Returns false if it is needed to become a new GUI (or other)
     public abstract boolean open(Player player, MinecraftServer server);
 
+
+    /// Returns true if allowed to continue Vanilla openning
+    /// Returns false if it is needed to become a new GUI (or other)
     public boolean playerBreak(Player player, MinecraftServer server) {
         if (this.status == ProtectedStatus.CLEAR){
             return true;
@@ -121,12 +131,12 @@ public abstract class CheckProtected {
                 return new SellBook(stack, cpdata, status);
 
             }
-            case SELL_ERROR -> {
-
-                // TODO
-
-                return new SellBook(stack, cpdata, status);
-            }
+//            case SELL_ERROR -> {
+//
+//                // TODO
+//
+//                return new SellBook(stack, cpdata, status);
+//            }
         }
         return new Clear(stack);
     }
@@ -169,27 +179,13 @@ public abstract class CheckProtected {
 
         tempCPdata = getCPdataOrGenerate(tempStack, level);
 
-//        if (cpdata == null) {
-//
-//            CPdata newData = new CPdata(
-//                    new Authorised(tempStack.get(DataComponents.WRITTEN_BOOK_CONTENT).author(), level.getServer()),
-//                    Optional.empty()
-//            );
-//
-//            writeCPdata(newData, tempStack);
-//            tempCPdata = newData;
-//
-//        } else {
-//            tempCPdata = cpdata;
-//        }
-
 
         return switch (status) {
             case CLEAR -> new Clear(tempStack);
             case ERROR -> new Error(tempStack, tempCPdata, status);
             case LOCK -> new Lock(tempStack, tempCPdata, status);
             case SELL -> new Sell(tempStack, tempCPdata, tempProtectedInventory, status);
-            case SELL_ERROR -> new SellError(tempStack, tempCPdata, status);
+            //case SELL_ERROR -> new SellError(tempStack, tempCPdata, status);
         };
 
 
@@ -218,6 +214,24 @@ public abstract class CheckProtected {
 
     }
 
+    protected void GenerateSellCPdata() {
+
+        if (this.cpdata.sellData.isPresent()) {
+            return;
+        }
+
+        this.cpdata = new CPdata(
+                this.cpdata.getAuthorised(),
+                Optional.of(new SellData(
+                        Optional.empty(),
+                        Optional.empty(),
+                        ItemContainerContents.fromItems(NonNullList.withSize(SellData.PROFIT_INVENTORY_SIZE, ItemStack.EMPTY))
+                ))
+        );
+
+        writeCPdata(this.cpdata, stack);
+    }
+
 
     /// Must ensure that the book is NOT clear
     ///
@@ -244,9 +258,9 @@ public abstract class CheckProtected {
     }
 
     /// returns CPdata from given item stack. If error -> returns null
-    protected CPdata getCpdata() {
-        return getCPdata(this.stack);
-    }
+//    protected CPdata getCpdata() {
+//        return getCPdata(this.stack);
+//    }
 
 
     /// returns CPdata from given item stack. If error -> returns null
@@ -280,13 +294,13 @@ public abstract class CheckProtected {
 
     }
 
-    protected void writeCPdata(CPdata newData){
+//    protected void writeCPdata(CPdata newData){
+//
+//        writeCPdata(newData, this.stack);
+//
+//    }
 
-        writeCPdata(newData, this.stack);
-
-    }
-
-    protected void writeCPdata() {
+    public void writeCPdata() {
         writeCPdata(this.cpdata, this.stack);
     }
 
@@ -316,6 +330,10 @@ public abstract class CheckProtected {
     public void removeAuthorised(UUID player){
         this.cpdata.getAuthorised().removeAuthorised(player);
         this.writeCPdata();
+    }
+
+    public ItemStack getStack() {
+        return this.stack;
     }
 
 
