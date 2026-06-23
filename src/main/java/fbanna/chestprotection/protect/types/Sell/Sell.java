@@ -3,19 +3,24 @@ package fbanna.chestprotection.protect.types.Sell;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.ui.sell.SellUI;
+import fbanna.chestprotection.util.TradeInventory;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class Sell extends CheckProtected {
 
-    private final Container protectedInventory;
+    private final TradeInventory protectedInventory;
 
 
     public Sell(ItemStack stack, CPdata cpdata, Container protectedInventory, ProtectedStatus status) {
-        this.protectedInventory = protectedInventory;
+        this.protectedInventory = (TradeInventory) protectedInventory;
         super(stack, cpdata, status);
+
 
         this.GenerateSellCPdata();
 
@@ -35,7 +40,11 @@ public class Sell extends CheckProtected {
         //SimpleGui setupUI = new SellSetup((ServerPlayer) player, this.toSellBook());
 //        setupUI.open();
 
-        ChestProtection.LOGGER.info("need to open shop here!");
+        //ChestProtection.LOGGER.info("need to open shop here!");
+        SellUI ui = new SellUI((ServerPlayer) player, this);
+        ui.open();
+
+
         return false;
     }
 

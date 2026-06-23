@@ -4,7 +4,7 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.protect.Authorised;
 import fbanna.chestprotection.protect.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
-import fbanna.chestprotection.ui.sellsetup.SellSetup;
+import fbanna.chestprotection.ui.sellsetup.SellSetupUI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -54,7 +54,7 @@ public class SellBook extends CheckProtected {
         }
 
 
-        SimpleGui setupUI = new SellSetup((ServerPlayer) player, this);
+        SimpleGui setupUI = new SellSetupUI((ServerPlayer) player, this);
         setupUI.open();
 
         return false;

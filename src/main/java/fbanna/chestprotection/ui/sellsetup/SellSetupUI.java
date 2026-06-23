@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -22,7 +21,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SellSetup extends SimpleGui {
+public class SellSetupUI extends SimpleGui {
 
     private final SellBook cp;
 
@@ -61,7 +60,7 @@ public class SellSetup extends SimpleGui {
 //    private static final int[] light_grey_panes = {2, 11, 20, 29, 38, 47, 6, 15, 24, 33, 42, 51};
 //    private static final int[] black_panes = {4, 13, 22, 31};
 
-    public SellSetup(ServerPlayer player, SellBook cp) {
+    public SellSetupUI(ServerPlayer player, SellBook cp) {
 
         this.cp = cp;
         this.tradeItems = new TradeItem[]{
@@ -172,7 +171,7 @@ public class SellSetup extends SimpleGui {
 
                             this.isCountMenu = true;
 
-                            SimpleGui select_count = new SellSetupCount(this.player, this, j);
+                            SimpleGui select_count = new SellSetupCountUI(this.player, this, j);
                             select_count.open();
                         })
                         .hideDefaultTooltip()

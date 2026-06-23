@@ -8,13 +8,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
 import org.apache.commons.lang3.StringUtils;
 
-public class SellSetupCount extends AnvilInputGui {
+public class SellSetupCountUI extends AnvilInputGui {
 
-    private final SellSetup setupParent;
+    private final SellSetupUI setupParent;
 
     private final int tradeItemSlot;
 
-    public SellSetupCount(ServerPlayer player, SellSetup setupParent, int tradeItem) {
+    public SellSetupCountUI(ServerPlayer player, SellSetupUI setupParent, int tradeItem) {
         this.setupParent = setupParent;
         super(player, false);
 

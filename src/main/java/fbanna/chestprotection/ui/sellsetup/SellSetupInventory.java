@@ -7,7 +7,7 @@ import org.jspecify.annotations.NonNull;
 
 public class SellSetupInventory extends SimpleContainer{
 
-    private final SellSetup parentUI;
+    private final SellSetupUI parentUI;
 
 
     @Override
@@ -23,7 +23,7 @@ public class SellSetupInventory extends SimpleContainer{
 
 
 
-    public SellSetupInventory(SellSetup parentUI) {
+    public SellSetupInventory(SellSetupUI parentUI) {
         this.parentUI = parentUI;
         super(2);
     }
