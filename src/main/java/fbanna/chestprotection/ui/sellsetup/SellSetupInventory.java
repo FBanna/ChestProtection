@@ -10,14 +10,22 @@ public class SellSetupInventory extends SimpleContainer{
     private final SellSetupUI parentUI;
 
 
+//    @Override
+//    public void setItem(int slot, @NonNull ItemStack itemStack) {
+//
+//        super.setItem(slot, itemStack);
+//        parentUI.setTradeItem(slot, itemStack);
+//
+//
+//
+//    }
+
     @Override
-    public void setItem(int slot, @NonNull ItemStack itemStack) {
+    public void setChanged() {
 
-        super.setItem(slot, itemStack);
-        parentUI.setTradeItem(slot, itemStack);
+        this.parentUI.setTradeItems(this.items);
 
-
-
+        super.setChanged();
     }
 
 

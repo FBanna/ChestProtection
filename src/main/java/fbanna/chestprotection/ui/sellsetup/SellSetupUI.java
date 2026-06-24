@@ -6,6 +6,7 @@ import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.types.Sell.SellBook;
 import fbanna.chestprotection.protect.types.Sell.TradeItem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -190,35 +191,25 @@ public class SellSetupUI extends SimpleGui {
 
     private void updateComponentSelector() {
 
-        int pos = 0;
-        int i = 0;
+        int pos = 0; // slot index
+        int i = 0; // tradeItem index
+
+
+
         for (ItemStack stack: this.container.items) {
-            //ChestProtection.LOGGER.info(stack.toString());
 
-            //innerloop:
-            for (TypedDataComponent<?> component: stack.getComponents().filter(c -> !COMPONENT_BLACK_LIST.contains(c))) {
-
-                if (component.type().equals(DataComponents.ENCHANTMENTS)){
-                     TypedDataComponent<ItemEnchantments> enchants = (TypedDataComponent<ItemEnchantments>) component;
-
-                     if (enchants.value().isEmpty()) {
-                         ChestProtection.LOGGER.info("skipping empty enchants");
-                         continue;
-                     }
-
-
-                }
+            if (!stack.isEmpty()) {
+                //ChestProtection.LOGGER.info(stack.toString());
 
                 int i_final = i;
-                TypedDataComponent<?> component_final = component;
 
-                if (this.tradeItems[i].stack.has(component.type())) {
+                if (this.tradeItems[i].isItem()) {
 
                     this.setSlot(pos, new GuiElementBuilder(Items.WOOL.green())
-                            .setName(Component.nullToEmpty(component.type().toString()))
+                            .setName(Component.literal("Item"))
                             .setCallback(() -> {
 
-                                this.tradeItems[i_final].stack.remove(component_final.type());
+                                this.tradeItems[i_final].isItem = false;
                                 this.updateUI();
 
                             })
@@ -229,10 +220,10 @@ public class SellSetupUI extends SimpleGui {
                 } else {
 
                     this.setSlot(pos, new GuiElementBuilder(Items.WOOL.red())
-                            .setName(Component.nullToEmpty(component.type().toString()))
+                            .setName(Component.literal("Item"))
                             .setCallback(() -> {
 
-                                this.tradeItems[i_final].stack.applyComponents(DataComponentPatch.builder().set(component_final).build());
+                                this.tradeItems[i_final].isItem = true;
                                 this.updateUI();
 
                             })
@@ -242,7 +233,38 @@ public class SellSetupUI extends SimpleGui {
 
                 pos++;
 
+
+
+
+
+                for (TypedDataComponent<?> component: stack.getComponents().filter(c -> !COMPONENT_BLACK_LIST.contains(c))) {
+
+                    if (component.type().equals(DataComponents.ENCHANTMENTS)){
+                        TypedDataComponent<ItemEnchantments> enchants = (TypedDataComponent<ItemEnchantments>) component;
+
+                        if (enchants.value().isEmpty()) {
+                            ChestProtection.LOGGER.info("skipping empty enchants");
+                            continue;
+                        }
+
+
+                    }
+//
+//                int i_final = i;
+//                TypedDataComponent<?> component_final = component;
+
+                    placeComponentSelector(
+                            component,
+                            pos,
+                            i,
+                            this.tradeItems[i].stack.has(component.type())
+                    );
+
+                    pos++;
+
+                }
             }
+
 
 
 
@@ -257,6 +279,36 @@ public class SellSetupUI extends SimpleGui {
         }
     }
 
+    private void placeComponentSelector(TypedDataComponent<?> component, int pos, int i, boolean isPresent) {
+        if (isPresent) {
+
+            this.setSlot(pos, new GuiElementBuilder(Items.WOOL.green())
+                    .setName(Component.nullToEmpty(component.type().toString()))
+                    .setCallback(() -> {
+
+                        this.tradeItems[i].stack.remove(component.type());
+                        this.updateUI();
+
+                    })
+                    .hideDefaultTooltip()
+            );
+
+
+        } else {
+
+            this.setSlot(pos, new GuiElementBuilder(Items.WOOL.red())
+                    .setName(Component.nullToEmpty(component.type().toString()))
+                    .setCallback(() -> {
+
+                        this.tradeItems[i].stack.applyComponents(DataComponentPatch.builder().set(component).build());
+                        this.updateUI();
+
+                    })
+                    .hideDefaultTooltip()
+            );
+        }
+    }
+
     public void setCount(int slot, int count){
         this.tradeItems[slot].count = count;
         this.isCountMenu = false;
@@ -266,14 +318,29 @@ public class SellSetupUI extends SimpleGui {
 
 
 
-    protected void setTradeItem(int slot, ItemStack stack){
+//    protected void setTradeItem(int slot, ItemStack stack){
+//
+//        this.tradeItems[slot].stack = stack.copy();
+//        this.tradeItems[slot].count = stack.count();
+//
+//        this.updateUI();
+//
+//
+//    }
 
-        this.tradeItems[slot].stack = stack.copy();
-        this.tradeItems[slot].count = stack.count();
+    protected void setTradeItems(NonNullList<ItemStack> items) {
+        int i = 0;
+        for (ItemStack stack: items) {
+
+            this.tradeItems[i].stack = stack.copy();
+            this.tradeItems[i].count = stack.count();
+
+            i++;
+
+
+        }
 
         this.updateUI();
-
-
     }
 
     public TradeItem getTradeItem(int slot) {

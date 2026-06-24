@@ -6,12 +6,16 @@ import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.types.Sell.Sell;
 import fbanna.chestprotection.protect.types.Sell.SellData;
 import fbanna.chestprotection.protect.types.Sell.TradeItem;
+import fbanna.chestprotection.util.TradeInventory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemContainerContents;
 
 import java.util.Optional;
 
@@ -19,11 +23,14 @@ public class SellUI extends SimpleGui {
 
     private final Sell cp;
 
+    private final TradeInventory container;
+
 
     private final static int[] PANES = {7, 16, 25};
 
     public SellUI(ServerPlayer player, Sell cp) {
         this.cp = cp;
+        this.container = new TradeInventory(21);
         super(MenuType.GENERIC_9x3, player, false);
 
         Optional<NameAndId> optionalName = player.level().getServer().services().nameToIdCache().get(this.cp.cpdata.getAuthorised().getAuthor());
@@ -70,12 +77,14 @@ public class SellUI extends SimpleGui {
                     .hideDefaultTooltip()
             );
 
-            cost.setName(Component.literal("View profit's"))
+            cost
+                    //.setName(Component.literal("View profit's"))
                     .setCallback(() -> {
                         ChestProtection.LOGGER.info("open profit inventory here");
                     });
 
-            product.setName(Component.literal("View inventory"))
+            product
+                    //.setName(Component.literal("View inventory"))
                     .setCallback(() -> {
                         ChestProtection.LOGGER.info("open normal inventory here!");
                     });
@@ -84,13 +93,28 @@ public class SellUI extends SimpleGui {
         this.setSlot(8, cost);
         this.setSlot(26, product);
 
+        int i = 0;
+        for (int y = 0; y < 2; y++){ // 0,1,2
+
+            for (int x = 0; x < 6; x++) { //0,1,2,3,4,5,6
+                this.setSlot(x + y*9, new Slot(this.container, i, x,y));
+                i++;
+            }
+        }
+
     }
 
 
 
     private void updateButton() {
 
-
+//        ItemContainerContents.
+//        SellData data = this.cp.cpdata.sellData.get();
+//        if (
+//                this.container.isPresent(data.getCost().get())
+//                && this.cp.protectedInventory.isPresent(data.getProduct().get())
+//                && data.getProfitInventory()
+//        )
 
     }
 
