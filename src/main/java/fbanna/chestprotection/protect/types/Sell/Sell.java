@@ -1,25 +1,22 @@
 package fbanna.chestprotection.protect.types.Sell;
 
-import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
-import fbanna.chestprotection.util.TradeInventory;
 import fbanna.chestprotection.ui.sell.SellUI;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class Sell extends CheckProtected {
 
-    public final TradeInventory protectedInventory;
+    public final Container protectedInventory;
 
 
     public Sell(ItemStack stack, CPdata cpdata, Container protectedInventory, ProtectedStatus status) {
-        this.protectedInventory =  new TradeInventory(protectedInventory);
+        this.protectedInventory =  protectedInventory;
 
         super(stack, cpdata, status);
 

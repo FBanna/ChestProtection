@@ -25,15 +25,21 @@ public class TradeItem {
     }
 
     public int getCount() {
-        return count;
+        return this.count;
     }
 
     public boolean isItem() {
-        return isItem;
+        return this.isItem;
     }
 
     public ItemStack getStack() {
-        return stack;
+        return this.stack;
     }
+
+    public ItemStack copyStackWithCount() {
+        return this.stack.copyWithCount(this.count);
+    }
+
+
 
 }

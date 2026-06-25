@@ -243,7 +243,7 @@ public class SellSetupUI extends SimpleGui {
                         TypedDataComponent<ItemEnchantments> enchants = (TypedDataComponent<ItemEnchantments>) component;
 
                         if (enchants.value().isEmpty()) {
-                            ChestProtection.LOGGER.info("skipping empty enchants");
+                            //ChestProtection.LOGGER.info("skipping empty enchants");
                             continue;
                         }
 

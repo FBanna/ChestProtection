@@ -1,5 +1,6 @@
 package fbanna.chestprotection.ui.sellsetup;
 
+import fbanna.chestprotection.ChestProtection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +23,8 @@ public class SellSetupInventory extends SimpleContainer{
 
     @Override
     public void setChanged() {
+
+        //ChestProtection.LOGGER.info("set count");
 
         this.parentUI.setTradeItems(this.items);
 
