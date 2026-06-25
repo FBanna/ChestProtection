@@ -7,10 +7,7 @@ import fbanna.chestprotection.protect.types.Sell.SellBook;
 import fbanna.chestprotection.protect.types.Sell.TradeItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.component.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
@@ -22,6 +19,8 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import java.util.HashSet;
 import java.util.Set;
 
+import static fbanna.chestprotection.util.TradeInventoryUtils.COMPONENT_BLACK_LIST;
+
 public class SellSetupUI extends SimpleGui {
 
     private final SellBook cp;
@@ -30,28 +29,6 @@ public class SellSetupUI extends SimpleGui {
 
     private SellSetupInventory container;
     private boolean isCountMenu;
-
-    private static final HashSet<DataComponentType<?>> COMPONENT_BLACK_LIST = new HashSet<>(
-            Set.of(
-                    DataComponents.ENCHANTABLE,
-                    DataComponents.ITEM_MODEL,
-                    DataComponents.ITEM_NAME,
-                    DataComponents.MAX_DAMAGE,
-                    DataComponents.MAX_STACK_SIZE,
-                    DataComponents.USE_COOLDOWN,
-                    DataComponents.USE_EFFECTS,
-                    DataComponents.BREAK_SOUND,
-                    DataComponents.REPAIR_COST,
-                    DataComponents.REPAIRABLE,
-                    DataComponents.SWING_ANIMATION,
-                    DataComponents.RARITY,
-                    DataComponents.LORE,
-                    DataComponents.ATTRIBUTE_MODIFIERS,
-                    DataComponents.TOOLTIP_DISPLAY,
-                    DataComponents.ENCHANTMENT_GLINT_OVERRIDE
-
-            )
-    );
 
 //            {
 //            DataComponents.ENCHANTABLE,
@@ -234,9 +211,6 @@ public class SellSetupUI extends SimpleGui {
                 pos++;
 
 
-
-
-
                 for (TypedDataComponent<?> component: stack.getComponents().filter(c -> !COMPONENT_BLACK_LIST.contains(c))) {
 
                     if (component.type().equals(DataComponents.ENCHANTMENTS)){
@@ -249,9 +223,6 @@ public class SellSetupUI extends SimpleGui {
 
 
                     }
-//
-//                int i_final = i;
-//                TypedDataComponent<?> component_final = component;
 
                     placeComponentSelector(
                             component,
@@ -264,9 +235,6 @@ public class SellSetupUI extends SimpleGui {
 
                 }
             }
-
-
-
 
             // Clear old slots
             while (pos != 18 && pos != 45) {
@@ -332,7 +300,10 @@ public class SellSetupUI extends SimpleGui {
         int i = 0;
         for (ItemStack stack: items) {
 
+
+
             this.tradeItems[i].stack = stack.copy();
+
             this.tradeItems[i].count = stack.count();
 
             i++;

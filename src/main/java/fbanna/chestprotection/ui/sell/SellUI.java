@@ -6,6 +6,7 @@ import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.types.Sell.Sell;
 import fbanna.chestprotection.protect.types.Sell.SellData;
 import fbanna.chestprotection.protect.types.Sell.TradeItem;
+import fbanna.chestprotection.ui.profit.ProfitUI;
 import fbanna.chestprotection.ui.sellsetup.SellSetupInventory;
 import fbanna.chestprotection.util.TradeInventoryUtils;
 import net.minecraft.ChatFormatting;
@@ -92,8 +93,9 @@ public class SellUI extends SimpleGui {
 
                         this.close();
 
-                        player.openMenu((MenuProvider) this.cp.cpdata.sellData.get().getProfitInventory());
-                        ChestProtection.LOGGER.info("open profit inventory here");
+                        ProfitUI ui = new ProfitUI(player, this.cp.cpdata.sellData.get().getProfitInventory());
+                        ui.open();
+                        //ChestProtection.LOGGER.info("open profit inventory here");
                     });
 
             product
@@ -171,6 +173,15 @@ public class SellUI extends SimpleGui {
         this.setSlot(ACCEPT_SLOT, new GuiElementBuilder(Items.WOOL.green())
                 .setName(Component.literal("Confirm"))
                 .setCallback(() -> {
+
+
+                    // Product: Chest -> SellUI
+                    TradeInventoryUtils.tradeInto(
+                            this.cp.protectedInventory,
+                            this.cp.cpdata.sellData.get().getProduct().get(),
+                            this.container
+                    );
+
                     ChestProtection.LOGGER.info("doing trade");
                 })
 
