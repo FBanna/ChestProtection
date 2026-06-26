@@ -93,7 +93,7 @@ public class SellUI extends SimpleGui {
 
                         this.close();
 
-                        ProfitUI ui = new ProfitUI(player, this.cp.cpdata.sellData.get().getProfitInventory());
+                        ProfitUI ui = new ProfitUI(player, this.cp);
                         ui.open();
                         //ChestProtection.LOGGER.info("open profit inventory here");
                     });
@@ -182,21 +182,30 @@ public class SellUI extends SimpleGui {
                             this.container
                     );
 
+                    // Cost: SellUI -> ProfitInventory
+
+                    TradeInventoryUtils.tradeInto(
+                            this.container,
+                            this.cp.cpdata.sellData.get().getCost().get(),
+                            this.cp.cpdata.sellData.get().getProfitInventory()
+                    );
+
                     ChestProtection.LOGGER.info("doing trade");
                 })
 
         );
 
 
-//        if (
-//                TradeInventoryUtils.isPresent(this.container, data.getCost().get())
-//                && TradeInventoryUtils.isPresent(this.cp.protectedInventory, data.getProduct().get())
-//                &&
-//                //&& data.getProfitInventory()
-//        ){
-//
-//        }
 
+    }
+
+
+    @Override
+    public void onRemoved() {
+
+        this.container.dropAll(this.player);
+
+        super.onRemoved();
     }
 
 

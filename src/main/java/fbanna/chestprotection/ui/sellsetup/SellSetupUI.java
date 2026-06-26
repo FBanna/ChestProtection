@@ -5,6 +5,7 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.types.Sell.SellBook;
 import fbanna.chestprotection.protect.types.Sell.TradeItem;
+import fbanna.chestprotection.ui.lock.EditAuthorised;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.*;
@@ -19,6 +20,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import java.util.HashSet;
 import java.util.Set;
 
+import static fbanna.chestprotection.ui.ControlTextures.GUI_QUESTION_MARK;
 import static fbanna.chestprotection.util.TradeInventoryUtils.COMPONENT_BLACK_LIST;
 
 public class SellSetupUI extends SimpleGui {
@@ -63,6 +65,18 @@ public class SellSetupUI extends SimpleGui {
                     .hideDefaultTooltip()
             );
         }
+
+        this.setSlot(23, new GuiElementBuilder(Items.PLAYER_HEAD)
+                .setProfileSkinTexture(GUI_QUESTION_MARK)
+                .setName(Component.literal("Edit Authorisation"))
+                .setCallback(() -> {
+                    EditAuthorised ea = new EditAuthorised(player, cp);
+                    this.close();
+                    ea.open();
+                })
+                .hideDefaultTooltip()
+
+        );
 
 
 
@@ -322,15 +336,11 @@ public class SellSetupUI extends SimpleGui {
 
     @Override
     public void onRemoved() {
-
         if (!this.isCountMenu) {
 
             this.container.dropAll(this.player);
 
         }
-
-
-
 
         super.onRemoved();
     }

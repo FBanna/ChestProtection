@@ -89,7 +89,7 @@ public class TradeInventoryUtils {
             }
 
             if (!stack.getComponents().get(component.type()).equals(component.value())) {
-                ChestProtection.LOGGER.info(component.type().toString() + stack.getItem().toString());
+                //ChestProtection.LOGGER.info(component.type().toString() + stack.getItem().toString());
                 return false;
             }
 

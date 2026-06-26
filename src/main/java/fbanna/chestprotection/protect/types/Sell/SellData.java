@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fbanna.chestprotection.ChestProtection;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.core.NonNullList;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueOutput;
 
+import java.util.List;
 import java.util.Optional;
 
 public class SellData {
@@ -24,7 +26,7 @@ public class SellData {
 
     private Optional<TradeItem> cost;
     private Optional<TradeItem> product;
-    private SimpleContainer profitInventory;
+    private ProfitInventory profitInventory;
 
     public static final Codec<SellData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             TradeItem.CODEC.optionalFieldOf("cost").forGetter(SellData::getCost),
@@ -37,16 +39,11 @@ public class SellData {
         this.cost = cost;
         this.product = product;
 
-        ItemStack[] temparray = profitInventory.allItemsCopyStream().toArray(ItemStack[]::new);
-        SimpleContainer temp = new SimpleContainer(PROFIT_INVENTORY_SIZE);
+        NonNullList<ItemStack> out = NonNullList.withSize(PROFIT_INVENTORY_SIZE, ItemStack.EMPTY);
 
-        for(int i = 0; i < temparray.length; i++) {
-            temp.setItem(i, temparray[i]);
-        }
+        profitInventory.copyInto(out);
+        this.profitInventory = new ProfitInventory( out.toArray(ItemStack[]::new));
 
-
-
-        this.profitInventory = temp;
     }
 
     public Optional<TradeItem> getCost() {

@@ -375,18 +375,29 @@ public class EditAuthorised extends AnvilInputGui {
 
     private void updateSearchedPlayer(String playerName) {
 
+
+
         if(playerName.length() == 0 || playerName.length() < 3) {
 
             this.setSlot(1, new GuiElementBuilder(Items.PLAYER_HEAD)
                     .setName(Component.literal("Invalid name!").withStyle(ChatFormatting.RED))
                     .hideDefaultTooltip()
-                    .setProfileSkinTexture(GUI_QUESTION_MARK));
+                    .setProfileSkinTexture(GUI_QUESTION_MARK)
+            );
 
 
             this.searchedPlayerResult = null;
             updateSearchedPlayerResult();
             return;
         }
+
+        this.setSlot(1, new GuiElementBuilder(Items.PLAYER_HEAD)
+                .setName(Component.literal("Searching for player").withStyle(ChatFormatting.GRAY))
+                .hideDefaultTooltip()
+                .setProfileSkinTexture(GUI_QUESTION_MARK)
+        );
+
+        this.clearSlot(2);
 
         //ChestProtection.LOGGER.info("updating the player search field!");
         //ChestProtection.LOGGER.info(this.cp.cpdata.authorised.getAuthorised().toString());
@@ -416,7 +427,7 @@ public class EditAuthorised extends AnvilInputGui {
 
 
                     this.setSlot(1, new GuiElementBuilder(Items.PLAYER_HEAD)
-                            .setName(Component.literal(profile.name()))
+                            .setName(Component.literal(profile.name()).withStyle(ChatFormatting.WHITE))
                             .hideDefaultTooltip()
                             .setProfile(profile.id())
                     );
