@@ -22,10 +22,14 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuConstructor;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Optional;
+
+import static fbanna.chestprotection.ChestProtection.OPEN_SHOPS;
 
 public class SellUI extends SimpleGui {
 
@@ -80,8 +84,9 @@ public class SellUI extends SimpleGui {
                     .setName(Component.literal("Edit shop").withStyle(ChatFormatting.GRAY))
                     .setCallback(() -> {
 
+                        //this.cp.removeFromOpenShops();
                         this.close();
-                        this.cp.toSellBook().open(player, player.level().getServer());
+                        this.cp.toSellBook().open(this.player, this.player.level().getServer());
 
                     })
                     .hideDefaultTooltip()
@@ -91,9 +96,12 @@ public class SellUI extends SimpleGui {
                     //.setName(Component.literal("View profit's"))
                     .setCallback(() -> {
 
+                        // retain Open Shop status!
                         this.close();
+                        this.cp.addAndUpdatePlayers(this.player); // gank alert
+                        //this.cp.addToOpenShops();
+                        ProfitUI ui = new ProfitUI(this.player, this.cp);
 
-                        ProfitUI ui = new ProfitUI(player, this.cp);
                         ui.open();
                         //ChestProtection.LOGGER.info("open profit inventory here");
                     });
@@ -104,7 +112,7 @@ public class SellUI extends SimpleGui {
 
                         this.close();
 
-                        player.openMenu((MenuProvider) this.cp.protectedInventory); // dont know how this works!
+                        this.cp.openProtectedInventory(this.player);
 
                     });
         }
@@ -163,6 +171,7 @@ public class SellUI extends SimpleGui {
             return;
         }
 
+
         if (!TradeInventoryUtils.isPresent(this.container, data.getCost().get())) {
             this.setSlot(ACCEPT_SLOT, new GuiElementBuilder(Items.WOOL.red())
                     .setName(Component.literal("No money!").withStyle(ChatFormatting.RED))
@@ -174,23 +183,34 @@ public class SellUI extends SimpleGui {
                 .setName(Component.literal("Confirm"))
                 .setCallback(() -> {
 
-
-                    // Product: Chest -> SellUI
-                    TradeInventoryUtils.tradeInto(
-                            this.cp.protectedInventory,
-                            this.cp.cpdata.sellData.get().getProduct().get(),
-                            this.container
-                    );
-
                     // Cost: SellUI -> ProfitInventory
 
-                    TradeInventoryUtils.tradeInto(
+                    ArrayList<ItemStack> remaining1 = TradeInventoryUtils.tradeInto(
                             this.container,
                             this.cp.cpdata.sellData.get().getCost().get(),
                             this.cp.cpdata.sellData.get().getProfitInventory()
                     );
 
-                    ChestProtection.LOGGER.info("doing trade");
+                    assert remaining1.isEmpty(): "Failed to check canFit properly!";
+
+
+                    // Product: Chest -> SellUI
+                    ArrayList<ItemStack> remaining2 = TradeInventoryUtils.tradeInto(
+                            this.cp.protectedInventory,
+                            this.cp.cpdata.sellData.get().getProduct().get(),
+                            this.container
+                    );
+//
+//                    ChestProtection.LOGGER.info("shit, we had " + remaining1.size() + " left over in cost & " + remaining2.size() + " left over in product");
+
+
+                    // handle remaning items to sellUI
+                    for (ItemStack stack: remaining2) {
+                        this.player.handleExtraItemsCreatedOnUse(stack);
+                    }
+
+                    this.cp.writeCPdata();
+
                 })
 
         );
@@ -200,10 +220,13 @@ public class SellUI extends SimpleGui {
     }
 
 
+
+
     @Override
     public void onRemoved() {
 
         this.container.dropAll(this.player);
+        this.cp.removeAndUpdatePlayers(this.player);
 
         super.onRemoved();
     }

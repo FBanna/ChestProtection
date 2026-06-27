@@ -1,11 +1,15 @@
 package fbanna.chestprotection.ui.profit;
 
+import eu.pb4.sgui.api.ClickType;
+import eu.pb4.sgui.api.elements.GuiElement;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.protect.types.Sell.ProfitInventory;
 import fbanna.chestprotection.protect.types.Sell.Sell;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 
@@ -23,27 +27,20 @@ public class ProfitUI extends SimpleGui {
 
         this.setTitle(Component.literal("Profits"));
 
-        updateSlots();
-
-    }
-
-    protected void updateSlots() {
 
         for (int i = 0; i < this.getSize(); i++) {
-
-            if (this.profitInventory.getItem(i).isEmpty()) {
-                this.clearSlot(i);
-            } else {
-                this.setSlot(i, new Slot(this.profitInventory, i, 0,0));
-            }
-
-
+            this.setSlot(i, new ProfitSlot(this.profitInventory, i));
         }
 
     }
 
-    protected void saveProfitInventory() {
 
+
+    @Override
+    public void onRemoved() {
+        this.cp.removeAndUpdatePlayers(this.player);
+
+        super.onRemoved();
     }
 
 

@@ -17,6 +17,7 @@ import fbanna.chestprotection.protect.types.Sell.SellData;
 import fbanna.chestprotection.protect.types.Sell.TradeItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -37,8 +38,13 @@ import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.DoubleBlockCombiner;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
+import static fbanna.chestprotection.ChestProtection.OPEN_SHOPS;
 
 public abstract class CheckProtected {
 
@@ -59,6 +65,7 @@ public abstract class CheckProtected {
     private final ItemStack stack;
     //private Container protectedInventory;
     private final ProtectedStatus status;
+
 
 
 
@@ -141,19 +148,26 @@ public abstract class CheckProtected {
         return new Clear(stack);
     }
 
-
+    // May need to find prexisting CheckProtected objects
     public static CheckProtected createContainerOpen(BlockPos position, Level level) {
+
 
         Container tempProtectedInventory = null;
         ItemStack tempStack = null;
         CPdata tempCPdata = null;
+        GlobalPos correctedPosition;
+
+
 
 
 
         // Finding book & matching its content
         BlockState state = level.getBlockState(position);
 
+
+
         BlockEntity entity = level.getBlockEntity(position);
+
 
         Block block = state.getBlock();
 
@@ -165,7 +179,35 @@ public abstract class CheckProtected {
             return new Clear(tempStack);
         }
 
-        tempProtectedInventory = (Container) entity;
+
+
+        if (block == Blocks.CHEST) {
+
+            ChestBlock t = (ChestBlock) block;
+
+            if (ChestBlock.getBlockType(state) == DoubleBlockCombiner.BlockType.SECOND) {
+                correctedPosition = GlobalPos.of(level.dimension(), ChestBlock.getConnectedBlockPos(position, state));
+            } else {
+                correctedPosition = GlobalPos.of(level.dimension(),position);
+            }
+
+            //tempProtectedInventory = (Container) ((ChestBlock) block).combine(state, level, position, true).;
+
+            tempProtectedInventory = ChestBlock.getContainer((ChestBlock) block, state, level, position, true);
+
+        } else {
+
+            correctedPosition = GlobalPos.of(level.dimension(),position);
+            tempProtectedInventory = (Container) entity;
+
+        }
+
+
+
+
+
+
+
 
         tempStack = tempProtectedInventory.getItem(0);
 
@@ -173,6 +215,13 @@ public abstract class CheckProtected {
 
         if (status == ProtectedStatus.CLEAR){
             return new Clear(tempStack);
+        }
+
+        // Check if Sell aready exists for object
+
+        if (OPEN_SHOPS.containsKey(correctedPosition)) {
+            ChestProtection.LOGGER.info("found pre-existing shop!");
+            return OPEN_SHOPS.get(correctedPosition);
         }
 
         // Creating Authorisation
@@ -184,7 +233,7 @@ public abstract class CheckProtected {
             case CLEAR -> new Clear(tempStack);
             case ERROR -> new Error(tempStack, tempCPdata, status);
             case LOCK -> new Lock(tempStack, tempCPdata, status);
-            case SELL -> new Sell(tempStack, tempCPdata, tempProtectedInventory, status);
+            case SELL -> new Sell(tempStack, tempCPdata, tempProtectedInventory, status, correctedPosition);
             //case SELL_ERROR -> new SellError(tempStack, tempCPdata, status);
         };
 

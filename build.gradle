@@ -23,6 +23,13 @@ loom {
 		}
 	}
 
+	// enables asserts
+	runs {
+		server {
+			getJvmArguments().add("-ea")
+		}
+	}
+
 }
 
 dependencies {

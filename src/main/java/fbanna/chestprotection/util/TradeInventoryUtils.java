@@ -2,6 +2,7 @@ package fbanna.chestprotection.util;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
+import fbanna.chestprotection.protect.types.Sell.Sell;
 import fbanna.chestprotection.protect.types.Sell.TradeItem;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -10,6 +11,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,19 +39,7 @@ public class TradeInventoryUtils {
             )
     );
 
-//    public TradeInventory(int size) {
-//        super(size);
-//    }
-//
-//    public TradeInventory(Container container) {
-//
-//        this(container.getContainerSize());
-//
-//        for(int i = 0; i < container.getContainerSize(); i++) {
-//            this.setItem(i, container.getItem(i));
-//        }
-//
-//    }
+
     /// isPresent (TradeItem) -> (boolean)
     public static boolean isPresent(Container container, TradeItem trade) {
 
@@ -100,35 +90,26 @@ public class TradeInventoryUtils {
         return true;
     }
 
-//    public void writeTo(){
-//
-//        TagValueOutput output = TagValueOutput.createWithoutContext(ProblemReporter.DISCARDING);
-//        ContainerHelper.saveAllItems(
-//                output,
-//                this.items
-//        );
-//
-//        ChestProtection.LOGGER.info(output.buildResult().toString());
-//
-//
-//    }
 
 
-    /// TradeInto (TradeItem, TradeInventory) -> (boolean)
+    /// TradeInto (TradeItem, TradeInventory) -> ArrayList<ItemStack>
+    /// returned array are the items that could not fit
+    /// ensure proper canFit checks are done before calling function
 
-    public static void tradeInto(Container container, TradeItem trade, Container into) {
+    public static ArrayList<ItemStack> tradeInto(Container container, TradeItem trade, Container into) {
 
+        ArrayList<ItemStack> remainingStacks = new ArrayList<>();
 
-        // implement propper space checks
         if (!isPresent(container, trade)) {
-            return;
+            return remainingStacks;
         }
 
         SimpleContainer simplified = (SimpleContainer) into;
 
-        if (!simplified.canAddItem(trade.stack)) {
-            return;
-        }
+
+//        if (!simplified.canAddItem(trade.stack)) {
+//            return;
+//        }
 
         int count = trade.getCount();
 
@@ -144,21 +125,26 @@ public class TradeInventoryUtils {
                 continue;
             }
 
-            if (stack.getCount() > count) {
-                container.setItem(i, stack.copyWithCount(count));
-                simplified.addItem(stack.copyWithCount(count));
-                // Count is 0 -> return
-                return;
-            } else {
-                container.setItem(i, ItemStack.EMPTY);
-                simplified.addItem(stack);
-                count = count - stack.getCount();
+            int attemptToMove = Math.min(count, stack.getCount());
+
+            ItemStack remaining = simplified.addItem(stack.copyWithCount(attemptToMove));
+            container.setItem(i, stack.copyWithCount(stack.getCount() - attemptToMove));
+
+            count = count - attemptToMove;
+
+            if(!remaining.isEmpty()) {
+                remainingStacks.add(remaining);
             }
 
             if(count == 0) {
-                return;
+                break;
             }
 
         }
+
+        assert count == 0;
+
+        return remainingStacks;
+
     }
 }

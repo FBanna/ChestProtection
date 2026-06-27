@@ -3,6 +3,7 @@ package fbanna.chestprotection.protect.types.Sell;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fbanna.chestprotection.ChestProtection;
+import fbanna.chestprotection.protect.CheckProtected;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.ProblemReporter;
@@ -28,6 +29,7 @@ public class SellData {
     private Optional<TradeItem> product;
     private ProfitInventory profitInventory;
 
+
     public static final Codec<SellData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             TradeItem.CODEC.optionalFieldOf("cost").forGetter(SellData::getCost),
             TradeItem.CODEC.optionalFieldOf("product").forGetter(SellData::getProduct),
@@ -43,6 +45,7 @@ public class SellData {
 
         profitInventory.copyInto(out);
         this.profitInventory = new ProfitInventory( out.toArray(ItemStack[]::new));
+
 
     }
 
