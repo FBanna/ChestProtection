@@ -106,6 +106,12 @@ public class Sell extends CheckProtected {
         }
     }
 
+    private void removeShop() {
+        this.players.clear();
+        removeFromOpenShops();
+        this.writeCPdata();
+    }
+
     private void updatePlayers() {
         for (ServerPlayer player: this.players) {
             if (player.hasDisconnected()) {
@@ -122,6 +128,18 @@ public class Sell extends CheckProtected {
         Level dimension =  player.level().getServer().getLevel(this.position.dimension());
         BlockState blockState = dimension.getBlockState(this.position.pos());
         player.openMenu(blockState.getMenuProvider(dimension, this.position.pos()));
-
     }
+
+    public boolean isPresentAndUpdate(MinecraftServer server) {
+
+        CheckProtected cp = CheckProtected.createContainerOpen(this.position.pos(), server.getLevel(this.position.dimension()), true);
+
+        if(cp.isClear()) {
+            this.removeShop();
+            return false;
+        }
+
+        return true;
+    }
+
 }

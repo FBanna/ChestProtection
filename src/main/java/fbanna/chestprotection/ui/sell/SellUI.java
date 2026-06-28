@@ -183,6 +183,15 @@ public class SellUI extends SimpleGui {
                 .setName(Component.literal("Confirm"))
                 .setCallback(() -> {
 
+
+                    // Double check cost & product are present
+                    if(
+                            !TradeInventoryUtils.isPresent(this.container, data.getCost().get()) ||
+                            !TradeInventoryUtils.isPresent(this.cp.protectedInventory, data.getProduct().get())
+                    ) {
+                                return;
+                    }
+
                     // Cost: SellUI -> ProfitInventory
 
                     ArrayList<ItemStack> remaining1 = TradeInventoryUtils.tradeInto(
@@ -218,6 +227,17 @@ public class SellUI extends SimpleGui {
 
 
     }
+
+    @Override
+    public void onTick() {
+        boolean isPresent = this.cp.isPresentAndUpdate(this.player.level().getServer());
+
+        if (!isPresent) {
+            this.close();
+        }
+    }
+
+
 
 
 

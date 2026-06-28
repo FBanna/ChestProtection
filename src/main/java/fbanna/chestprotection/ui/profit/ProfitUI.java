@@ -34,6 +34,14 @@ public class ProfitUI extends SimpleGui {
 
     }
 
+    @Override
+    public void onTick() {
+        boolean isPresent = this.cp.isPresentAndUpdate(this.player.level().getServer());
+
+        if (!isPresent) {
+            this.close();
+        }
+    }
 
 
     @Override

@@ -94,7 +94,7 @@ public class TradeInventoryUtils {
 
     /// TradeInto (TradeItem, TradeInventory) -> ArrayList<ItemStack>
     /// returned array are the items that could not fit
-    /// ensure proper canFit checks are done before calling function
+    /// ensure proper canFit & isPresent checks are done before calling function
 
     public static ArrayList<ItemStack> tradeInto(Container container, TradeItem trade, Container into) {
 

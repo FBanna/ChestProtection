@@ -144,8 +144,12 @@ public abstract class CheckProtected {
         return new Clear(stack);
     }
 
-    // May need to find prexisting CheckProtected objects
     public static CheckProtected createContainerOpen(BlockPos position, Level level) {
+        return createContainerOpen(position, level, false);
+    }
+
+    // May need to find prexisting CheckProtected objects
+    protected static CheckProtected createContainerOpen(BlockPos position, Level level, boolean ignoreExisting) {
 
 
         Container tempProtectedInventory = null;
@@ -157,24 +161,31 @@ public abstract class CheckProtected {
         // Finding book & matching its content
         BlockState state = level.getBlockState(position);
 
+        if (!state.hasBlockEntity()){
+            return new Clear(tempStack);
+        }
+
 
         BlockEntity entity = level.getBlockEntity(position);
 
 
         Block block = state.getBlock();
 
+
+
         if (!(entity instanceof Container)) {
+
             return new Clear(tempStack);
         }
 
         if (block != Blocks.CHEST && block != Blocks.BARREL) {
+
             return new Clear(tempStack);
         }
 
 
         if (block == Blocks.CHEST) {
 
-            ChestBlock t = (ChestBlock) block;
 
             if (ChestBlock.getBlockType(state) == DoubleBlockCombiner.BlockType.SECOND) {
                 correctedPosition = GlobalPos.of(level.dimension(), ChestBlock.getConnectedBlockPos(position, state));
@@ -199,12 +210,13 @@ public abstract class CheckProtected {
         ProtectedStatus status = getStatus(tempStack);
 
         if (status == ProtectedStatus.CLEAR) {
+
             return new Clear(tempStack);
         }
 
         // Check if Sell aready exists for object
 
-        if (OPEN_SHOPS.containsKey(correctedPosition)) {
+        if (OPEN_SHOPS.containsKey(correctedPosition) && !ignoreExisting) {
             ChestProtection.LOGGER.info("found pre-existing shop!");
             return OPEN_SHOPS.get(correctedPosition);
         }
