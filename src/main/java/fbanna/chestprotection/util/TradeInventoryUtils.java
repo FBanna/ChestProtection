@@ -1,9 +1,6 @@
 package fbanna.chestprotection.util;
 
-import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.protect.types.Sell.Sell;
-import fbanna.chestprotection.protect.types.Sell.TradeItem;
+import fbanna.chestprotection.protect.data.sell.TradeItem;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.TypedDataComponent;

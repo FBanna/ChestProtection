@@ -2,23 +2,21 @@ package fbanna.chestprotection.protect;
 
 import com.mojang.serialization.DataResult;
 import fbanna.chestprotection.ChestProtection;
+import fbanna.chestprotection.protect.data.CPdata;
 import fbanna.chestprotection.protect.types.*;
 import fbanna.chestprotection.protect.types.Error;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import fbanna.chestprotection.protect.types.Lock.Lock;
-import fbanna.chestprotection.protect.types.Lock.LockBook;
-import fbanna.chestprotection.protect.types.Sell.Sell;
-import fbanna.chestprotection.protect.types.Sell.SellBook;
-import fbanna.chestprotection.protect.types.Sell.SellData;
-import fbanna.chestprotection.protect.types.Sell.TradeItem;
+import fbanna.chestprotection.protect.types.lock.Lock;
+import fbanna.chestprotection.protect.types.lock.LockBook;
+import fbanna.chestprotection.protect.types.sell.Sell;
+import fbanna.chestprotection.protect.types.sell.SellBook;
+import fbanna.chestprotection.protect.data.sell.SellData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -27,8 +25,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.WrittenBookItem;
@@ -41,7 +37,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoubleBlockCombiner;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import static fbanna.chestprotection.ChestProtection.OPEN_SHOPS;
@@ -134,12 +129,6 @@ public abstract class CheckProtected {
                 return new SellBook(stack, cpdata, status);
 
             }
-//            case SELL_ERROR -> {
-//
-//                // TODO
-//
-//                return new SellBook(stack, cpdata, status);
-//            }
         }
         return new Clear(stack);
     }
@@ -148,7 +137,7 @@ public abstract class CheckProtected {
         return createContainerOpen(position, level, false);
     }
 
-    // May need to find prexisting CheckProtected objects
+
     protected static CheckProtected createContainerOpen(BlockPos position, Level level, boolean ignoreExisting) {
 
 
@@ -271,7 +260,8 @@ public abstract class CheckProtected {
                 Optional.of(new SellData(
                         Optional.empty(),
                         Optional.empty(),
-                        ItemContainerContents.fromItems(NonNullList.withSize(SellData.PROFIT_INVENTORY_SIZE, ItemStack.EMPTY))
+                        ItemContainerContents.EMPTY
+                        //ItemContainerContents.fromItems(NonNullList.withSize(SellData.PROFIT_INVENTORY_SIZE, ItemStack.EMPTY))
                 ))
         );
 
@@ -339,14 +329,9 @@ public abstract class CheckProtected {
 
     }
 
-//    protected void writeCPdata(CPdata newData){
-//
-//        writeCPdata(newData, this.stack);
-//
-//    }
 
     public void writeCPdata() {
-        ChestProtection.LOGGER.info("writing data!");
+
         writeCPdata(this.cpdata, this.stack);
     }
 

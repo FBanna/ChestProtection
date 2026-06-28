@@ -1,23 +1,9 @@
-package fbanna.chestprotection.protect.types.Sell;
+package fbanna.chestprotection.protect.data.sell;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.protect.CheckProtected;
-import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.core.NonNullList;
-import net.minecraft.util.ProblemReporter;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.storage.TagValueOutput;
-import net.minecraft.world.level.storage.ValueOutput;
 
-import java.util.List;
 import java.util.Optional;
 
 public class SellData {
@@ -42,6 +28,8 @@ public class SellData {
         this.product = product;
         this.profitInventory = profitInventory;
 
+
+
 //        NonNullList<ItemStack> out = NonNullList.withSize(PROFIT_INVENTORY_SIZE, ItemStack.EMPTY);
 //
 //        profitInventory.copyInto(out);
@@ -62,7 +50,11 @@ public class SellData {
         return profitInventory;
     }
 
-//    private ItemContainerContents getProfitInventoryContents() {
+    public void setProfitInventory(ItemContainerContents profitInventory) {
+        this.profitInventory = profitInventory;
+    }
+
+    //    private ItemContainerContents getProfitInventoryContents() {
 //        return ItemContainerContents.fromItems(this.profitInventory.items);
 //    }
     public void setTradeItems(TradeItem[] tradeItems) {

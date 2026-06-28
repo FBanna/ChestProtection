@@ -2,21 +2,17 @@ package fbanna.chestprotection;
 
 import fbanna.chestprotection.protect.CheckProtected;
 
-import fbanna.chestprotection.protect.types.Sell.Sell;
+import fbanna.chestprotection.protect.types.sell.Sell;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.world.InteractionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ChestProtection implements ModInitializer {
   public static final Logger LOGGER = LoggerFactory.getLogger("ChestProtection");

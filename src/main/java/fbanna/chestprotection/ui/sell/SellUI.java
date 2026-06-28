@@ -3,33 +3,22 @@ package fbanna.chestprotection.ui.sell;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.protect.types.Sell.Sell;
-import fbanna.chestprotection.protect.types.Sell.SellData;
-import fbanna.chestprotection.protect.types.Sell.TradeItem;
+import fbanna.chestprotection.protect.types.sell.Sell;
+import fbanna.chestprotection.protect.data.sell.SellData;
+import fbanna.chestprotection.protect.data.sell.TradeItem;
 import fbanna.chestprotection.ui.profit.ProfitUI;
-import fbanna.chestprotection.ui.sellsetup.SellSetupInventory;
 import fbanna.chestprotection.util.TradeInventoryUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.MenuConstructor;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Optional;
-
-import static fbanna.chestprotection.ChestProtection.OPEN_SHOPS;
 
 public class SellUI extends SimpleGui {
 
@@ -209,8 +198,6 @@ public class SellUI extends SimpleGui {
                             this.cp.cpdata.sellData.get().getProduct().get(),
                             this.container
                     );
-//
-//                    ChestProtection.LOGGER.info("shit, we had " + remaining1.size() + " left over in cost & " + remaining2.size() + " left over in product");
 
 
                     // handle remaning items to sellUI
@@ -219,6 +206,7 @@ public class SellUI extends SimpleGui {
                     }
 
                     this.cp.writeCPdata();
+                    this.updateButton();
 
                 })
 

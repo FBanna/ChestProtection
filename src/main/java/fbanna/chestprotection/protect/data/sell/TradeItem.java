@@ -1,8 +1,7 @@
-package fbanna.chestprotection.protect.types.Sell;
+package fbanna.chestprotection.protect.data.sell;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import fbanna.chestprotection.protect.Authorised;
 import net.minecraft.world.item.ItemStack;
 
 public class TradeItem {

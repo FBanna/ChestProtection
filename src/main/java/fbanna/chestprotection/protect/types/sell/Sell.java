@@ -1,31 +1,25 @@
-package fbanna.chestprotection.protect.types.Sell;
+package fbanna.chestprotection.protect.types.sell;
 
-import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.protect.CPdata;
+import fbanna.chestprotection.protect.data.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.data.sell.ProfitInventory;
 import fbanna.chestprotection.ui.sell.SellUI;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.ArrayList;
 
 import static fbanna.chestprotection.ChestProtection.OPEN_SHOPS;
-import static fbanna.chestprotection.protect.types.Sell.SellData.PROFIT_INVENTORY_SIZE;
+import static fbanna.chestprotection.protect.data.sell.SellData.PROFIT_INVENTORY_SIZE;
 
 public class Sell extends CheckProtected {
 
@@ -159,4 +153,13 @@ public class Sell extends CheckProtected {
         return this.protectedInventory;
     }
 
+    @Override
+    public void writeCPdata() {
+
+        this.cpdata.getSellData().get().setProfitInventory(
+                ItemContainerContents.fromItems(this.profitInventory.items)
+        );
+
+        super.writeCPdata();
+    }
 }

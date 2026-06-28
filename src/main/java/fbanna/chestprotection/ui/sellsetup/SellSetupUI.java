@@ -2,9 +2,8 @@ package fbanna.chestprotection.ui.sellsetup;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.protect.types.Sell.SellBook;
-import fbanna.chestprotection.protect.types.Sell.TradeItem;
+import fbanna.chestprotection.protect.types.sell.SellBook;
+import fbanna.chestprotection.protect.data.sell.TradeItem;
 import fbanna.chestprotection.ui.lock.EditAuthorised;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
@@ -16,9 +15,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static fbanna.chestprotection.ui.ControlTextures.GUI_QUESTION_MARK;
 import static fbanna.chestprotection.util.TradeInventoryUtils.COMPONENT_BLACK_LIST;

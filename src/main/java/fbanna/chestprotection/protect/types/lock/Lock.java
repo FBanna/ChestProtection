@@ -1,15 +1,12 @@
-package fbanna.chestprotection.protect.types.Lock;
+package fbanna.chestprotection.protect.types.lock;
 
 import com.mojang.authlib.GameProfile;
 import fbanna.chestprotection.protect.Authorised;
-import fbanna.chestprotection.protect.CPdata;
+import fbanna.chestprotection.protect.data.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
-import fbanna.chestprotection.ui.lock.EditAuthorised;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 

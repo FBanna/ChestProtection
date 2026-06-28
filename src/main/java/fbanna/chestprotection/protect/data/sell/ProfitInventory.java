@@ -1,6 +1,6 @@
-package fbanna.chestprotection.protect.types.Sell;
+package fbanna.chestprotection.protect.data.sell;
 
-import fbanna.chestprotection.ui.profit.ProfitUI;
+import fbanna.chestprotection.protect.types.sell.Sell;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
@@ -23,6 +23,11 @@ public class ProfitInventory extends SimpleContainer {
         this.cp = cp;
         super(itemstacks);
     }
+
+//    public ProfitInventory(int size, Sell cp) {
+//        this.cp = cp;
+//        super(size);
+//    }
 
 
     @Override

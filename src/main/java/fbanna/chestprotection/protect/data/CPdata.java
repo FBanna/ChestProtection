@@ -1,13 +1,9 @@
-package fbanna.chestprotection.protect;
+package fbanna.chestprotection.protect.data;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.RecordBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import fbanna.chestprotection.ChestProtection;
-import fbanna.chestprotection.protect.types.Sell.SellData;
-import net.minecraft.world.Container;
-import net.minecraft.world.item.component.ItemContainerContents;
+import fbanna.chestprotection.protect.Authorised;
+import fbanna.chestprotection.protect.data.sell.SellData;
 
 import java.util.Optional;
 
