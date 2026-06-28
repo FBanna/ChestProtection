@@ -16,20 +16,19 @@ import net.minecraft.world.inventory.Slot;
 public class ProfitUI extends SimpleGui {
 
     private final Sell cp;
-    private final ProfitInventory profitInventory;
+    //private final ProfitInventory profitInventory;
 
     public ProfitUI(ServerPlayer player, Sell cp) {
         super(MenuType.GENERIC_9x3, player, false);
 
         //this.profitInventory = new ProfitInventory(profitInventoryOld);
-        this.profitInventory = (ProfitInventory) cp.cpdata.sellData.get().getProfitInventory();
         this.cp = cp;
 
         this.setTitle(Component.literal("Profits"));
 
 
         for (int i = 0; i < this.getSize(); i++) {
-            this.setSlot(i, new ProfitSlot(this.profitInventory, i));
+            this.setSlot(i, new ProfitSlot(cp.getProfitInventory(), i));
         }
 
     }

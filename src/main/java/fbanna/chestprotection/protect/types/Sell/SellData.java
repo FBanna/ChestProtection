@@ -27,24 +27,25 @@ public class SellData {
 
     private Optional<TradeItem> cost;
     private Optional<TradeItem> product;
-    private ProfitInventory profitInventory;
+    private ItemContainerContents profitInventory;
 
 
     public static final Codec<SellData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             TradeItem.CODEC.optionalFieldOf("cost").forGetter(SellData::getCost),
             TradeItem.CODEC.optionalFieldOf("product").forGetter(SellData::getProduct),
-            ItemContainerContents.CODEC.fieldOf("profitInventory").forGetter(SellData::getProfitInventoryContents)
+            ItemContainerContents.CODEC.fieldOf("profitInventory").forGetter(SellData::getProfitInventory)
 
     ).apply(instance, SellData::new));
 
     public SellData(Optional<TradeItem> cost, Optional<TradeItem> product, ItemContainerContents profitInventory){
         this.cost = cost;
         this.product = product;
+        this.profitInventory = profitInventory;
 
-        NonNullList<ItemStack> out = NonNullList.withSize(PROFIT_INVENTORY_SIZE, ItemStack.EMPTY);
-
-        profitInventory.copyInto(out);
-        this.profitInventory = new ProfitInventory( out.toArray(ItemStack[]::new));
+//        NonNullList<ItemStack> out = NonNullList.withSize(PROFIT_INVENTORY_SIZE, ItemStack.EMPTY);
+//
+//        profitInventory.copyInto(out);
+//        this.profitInventory = new ProfitInventory( out.toArray(ItemStack[]::new));
 
 
     }
@@ -57,13 +58,13 @@ public class SellData {
         return product;
     }
 
-    public SimpleContainer getProfitInventory() {
+    public ItemContainerContents getProfitInventory() {
         return profitInventory;
     }
 
-    private ItemContainerContents getProfitInventoryContents() {
-        return ItemContainerContents.fromItems(this.profitInventory.items);
-    }
+//    private ItemContainerContents getProfitInventoryContents() {
+//        return ItemContainerContents.fromItems(this.profitInventory.items);
+//    }
     public void setTradeItems(TradeItem[] tradeItems) {
 
         if (tradeItems.length != 2) {

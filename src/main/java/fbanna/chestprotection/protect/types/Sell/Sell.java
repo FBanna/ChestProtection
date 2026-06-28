@@ -6,6 +6,7 @@ import fbanna.chestprotection.protect.CheckProtected;
 import fbanna.chestprotection.ui.sell.SellUI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -24,10 +25,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.ArrayList;
 
 import static fbanna.chestprotection.ChestProtection.OPEN_SHOPS;
+import static fbanna.chestprotection.protect.types.Sell.SellData.PROFIT_INVENTORY_SIZE;
 
 public class Sell extends CheckProtected {
 
-    public final Container protectedInventory;
+    private final Container protectedInventory;
+
+    private final ProfitInventory profitInventory;
     private final GlobalPos position;
 
     private final ArrayList<ServerPlayer> players = new ArrayList<>();
@@ -38,6 +42,11 @@ public class Sell extends CheckProtected {
 
         super(stack, cpdata, status);
         this.GenerateSellCPdata();
+
+        NonNullList<ItemStack> out = NonNullList.withSize(PROFIT_INVENTORY_SIZE, ItemStack.EMPTY);
+
+        this.cpdata.sellData.get().getProfitInventory().copyInto(out);
+        this.profitInventory = new ProfitInventory(this, out.toArray(ItemStack[]::new));
 
 
 
@@ -140,6 +149,14 @@ public class Sell extends CheckProtected {
         }
 
         return true;
+    }
+
+    public ProfitInventory getProfitInventory() {
+        return this.profitInventory;
+    }
+
+    public Container getProtectedInventory() {
+        return this.protectedInventory;
     }
 
 }

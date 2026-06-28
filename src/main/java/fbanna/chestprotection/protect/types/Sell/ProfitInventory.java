@@ -16,9 +16,11 @@ public class ProfitInventory extends SimpleContainer {
 //        //this.items = container.getItems();
 //    }
 
+    private final Sell cp;
 
-    public ProfitInventory(ItemStack... itemstacks) {
 
+    public ProfitInventory(Sell cp, ItemStack... itemstacks) {
+        this.cp = cp;
         super(itemstacks);
     }
 
@@ -26,7 +28,9 @@ public class ProfitInventory extends SimpleContainer {
     @Override
     public void setChanged() {
 
+        this.cp.writeCPdata();
         super.setChanged();
+
     }
 
     // remove ability to add items

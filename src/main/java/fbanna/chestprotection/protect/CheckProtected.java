@@ -346,6 +346,7 @@ public abstract class CheckProtected {
 //    }
 
     public void writeCPdata() {
+        ChestProtection.LOGGER.info("writing data!");
         writeCPdata(this.cpdata, this.stack);
     }
 

@@ -151,7 +151,7 @@ public class SellUI extends SimpleGui {
             return;
         }
 
-        if (!TradeInventoryUtils.isPresent(this.cp.protectedInventory, data.getProduct().get())) {
+        if (!TradeInventoryUtils.isPresent(this.cp.getProtectedInventory(), data.getProduct().get())) {
             this.setSlot(ACCEPT_SLOT, new GuiElementBuilder(Items.BARRIER)
                     .setName(
                             Component.literal("No stock! Contact %s".formatted(ownersNameOptional.get().name()))
@@ -161,7 +161,7 @@ public class SellUI extends SimpleGui {
             return;
         }
 
-        if (!data.getProfitInventory().canAddItem(data.getProduct().get().copyStackWithCount())) {
+        if (!this.cp.getProfitInventory().canAddItem(data.getProduct().get().copyStackWithCount())) {
             this.setSlot(ACCEPT_SLOT, new GuiElementBuilder(Items.BARRIER)
                     .setName(
                             Component.literal("Profit inventory filled! Contact %s".formatted(ownersNameOptional.get().name()))
@@ -187,7 +187,7 @@ public class SellUI extends SimpleGui {
                     // Double check cost & product are present
                     if(
                             !TradeInventoryUtils.isPresent(this.container, data.getCost().get()) ||
-                            !TradeInventoryUtils.isPresent(this.cp.protectedInventory, data.getProduct().get())
+                            !TradeInventoryUtils.isPresent(this.cp.getProtectedInventory(), data.getProduct().get())
                     ) {
                                 return;
                     }
@@ -197,7 +197,7 @@ public class SellUI extends SimpleGui {
                     ArrayList<ItemStack> remaining1 = TradeInventoryUtils.tradeInto(
                             this.container,
                             this.cp.cpdata.sellData.get().getCost().get(),
-                            this.cp.cpdata.sellData.get().getProfitInventory()
+                            this.cp.getProfitInventory()
                     );
 
                     assert remaining1.isEmpty(): "Failed to check canFit properly!";
@@ -205,7 +205,7 @@ public class SellUI extends SimpleGui {
 
                     // Product: Chest -> SellUI
                     ArrayList<ItemStack> remaining2 = TradeInventoryUtils.tradeInto(
-                            this.cp.protectedInventory,
+                            this.cp.getProtectedInventory(),
                             this.cp.cpdata.sellData.get().getProduct().get(),
                             this.container
                     );
