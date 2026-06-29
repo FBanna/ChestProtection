@@ -371,4 +371,8 @@ public abstract class CheckProtected {
         return (this.status == ProtectedStatus.CLEAR);
     }
 
+    public boolean isShop() {
+        return (this.status == ProtectedStatus.SELL);
+    }
+
 }

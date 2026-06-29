@@ -79,4 +79,33 @@ public class SellData {
 
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+
+        if(this == o) {
+            return true;
+        }
+
+        if(!(o instanceof SellData)) {
+            return false;
+        }
+
+        SellData other = (SellData) o;
+
+        if (!this.cost.equals(other.cost)) {
+            return false;
+        }
+
+        if(!this.product.equals(other.product)) {
+            return false;
+        }
+
+        if(!this.profitInventory.equals(other.profitInventory)) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

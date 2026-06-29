@@ -59,5 +59,30 @@ public class CPdata {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+
+        if(o == this) {
+            return true;
+        }
+
+        if (!(o instanceof CPdata)) {
+            return false;
+        }
+
+        CPdata other = (CPdata) o;
+
+        if (!this.authorised.equals(other.authorised)) {
+            return false;
+        }
+
+        if(!this.sellData.equals(other.sellData)) {
+            return false;
+        }
+
+        return true;
+
+    }
+
 
 }

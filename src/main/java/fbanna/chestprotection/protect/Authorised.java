@@ -89,7 +89,29 @@ public class Authorised {
         this.authorised.remove(player);
     }
 
+    @Override
+    public boolean equals(Object o) {
 
+        if(o == this) {
+            return true;
+        }
+
+        if(!(o instanceof Authorised)) {
+            return false;
+        }
+
+        Authorised other = (Authorised) o;
+
+        if (!this.author.equals(other.author)) {
+            return false;
+        }
+
+        if (!this.authorised.equals(other.authorised)) {
+            return false;
+        }
+
+        return true;
+    }
 
 
 }

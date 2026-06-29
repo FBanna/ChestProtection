@@ -1,5 +1,6 @@
 package fbanna.chestprotection.protect.types.sell;
 
+import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.data.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
 import fbanna.chestprotection.protect.data.sell.ProfitInventory;
@@ -137,7 +138,7 @@ public class Sell extends CheckProtected {
 
         CheckProtected cp = CheckProtected.createContainerOpen(this.position.pos(), server.getLevel(this.position.dimension()), true);
 
-        if(cp.isClear()) {
+        if(!cp.equals(this)) {
             this.removeShop();
             return false;
         }
@@ -153,6 +154,10 @@ public class Sell extends CheckProtected {
         return this.protectedInventory;
     }
 
+    protected GlobalPos getPosition() {
+        return this.position;
+    }
+
     @Override
     public void writeCPdata() {
 
@@ -162,4 +167,35 @@ public class Sell extends CheckProtected {
 
         super.writeCPdata();
     }
+
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (o == this) {
+//            return true;
+//        }
+//
+//        if (!(o instanceof Sell)) {
+//            ChestProtection.LOGGER.info("failed here1");
+//            return false;
+//        }
+//
+//        Sell other = (Sell)o;
+//
+//        GlobalPos otherPos = other.getPosition();
+//
+//        if (!this.position.isCloseEnough(otherPos.dimension(), otherPos.pos(),0)){
+//            ChestProtection.LOGGER.info("failed here2");
+//            return false;
+//        }
+//
+//        if(!this.cpdata.equals(other.cpdata)) {
+//            ChestProtection.LOGGER.info("failed here3");
+//            return false;
+//        }
+//
+//        return true;
+//
+//
+//    }
 }
