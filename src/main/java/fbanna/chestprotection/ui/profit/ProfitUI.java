@@ -5,6 +5,7 @@ import fbanna.chestprotection.protect.types.sell.Sell;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 
 public class ProfitUI extends SimpleGui {
 

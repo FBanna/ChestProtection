@@ -11,7 +11,7 @@ public class ProfitSlot extends Slot {
         super(container, slot, 0, 0);
     }
 
-
+    // This needs to exist for some reason :)
     @Override
     public boolean mayPlace(@NonNull ItemStack itemStack) {
         return false;
