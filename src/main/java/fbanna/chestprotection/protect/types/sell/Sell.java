@@ -139,6 +139,7 @@ public class Sell extends CheckProtected {
         CheckProtected cp = CheckProtected.createContainerOpen(this.position.pos(), server.getLevel(this.position.dimension()), true);
 
         if(!cp.equals(this)) {
+            ChestProtection.LOGGER.info("noticed that they do not match!");
             this.removeShop();
             return false;
         }
@@ -169,33 +170,35 @@ public class Sell extends CheckProtected {
     }
 
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (o == this) {
-//            return true;
-//        }
-//
-//        if (!(o instanceof Sell)) {
-//            ChestProtection.LOGGER.info("failed here1");
-//            return false;
-//        }
-//
-//        Sell other = (Sell)o;
-//
-//        GlobalPos otherPos = other.getPosition();
-//
-//        if (!this.position.isCloseEnough(otherPos.dimension(), otherPos.pos(),0)){
-//            ChestProtection.LOGGER.info("failed here2");
-//            return false;
-//        }
-//
-//        if(!this.cpdata.equals(other.cpdata)) {
-//            ChestProtection.LOGGER.info("failed here3");
-//            return false;
-//        }
-//
-//        return true;
-//
-//
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof Sell)) {
+
+            return false;
+        }
+
+        Sell other = (Sell)o;
+
+        GlobalPos otherPos = other.getPosition();
+
+        if (!this.position.isCloseEnough(otherPos.dimension(), otherPos.pos(),0)){
+
+            return false;
+        }
+
+        if(!this.cpdata.equals(other.cpdata)) {
+
+            return false;
+        }
+
+        return true;
+
+
+    }
+
+
 }

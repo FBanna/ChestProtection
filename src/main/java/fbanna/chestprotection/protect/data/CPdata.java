@@ -2,6 +2,7 @@ package fbanna.chestprotection.protect.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.Authorised;
 import fbanna.chestprotection.protect.data.sell.SellData;
 

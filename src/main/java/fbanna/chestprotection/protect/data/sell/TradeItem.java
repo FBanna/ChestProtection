@@ -40,5 +40,33 @@ public class TradeItem {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+
+        if(this == o) {
+            return true;
+        }
+
+        if(!(o instanceof TradeItem)) {
+            return false;
+        }
+
+        TradeItem other = (TradeItem) o;
+
+        if (!ItemStack.isSameItemSameComponents(this.stack, other.stack)) {
+            return false;
+        }
+
+        if(this.count != other.count) {
+            return false;
+        }
+
+        if(this.isItem != other.isItem) {
+            return false;
+        }
+
+        return true;
+    }
+
 
 }

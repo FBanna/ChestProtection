@@ -1,20 +1,13 @@
 package fbanna.chestprotection.protect.data.sell;
 
+import fbanna.chestprotection.protect.CheckProtected;
 import fbanna.chestprotection.protect.types.sell.Sell;
+import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
 public class ProfitInventory extends SimpleContainer {
-//
-//    @Override
-//    public void up
 
-//    public ProfitInventory(int size) {
-//
-//        super(size);
-//        //this.size = ;
-//        //this.items = container.getItems();
-//    }
 
     private final Sell cp;
 
@@ -24,10 +17,6 @@ public class ProfitInventory extends SimpleContainer {
         super(itemstacks);
     }
 
-//    public ProfitInventory(int size, Sell cp) {
-//        this.cp = cp;
-//        super(size);
-//    }
 
 
     @Override
@@ -38,30 +27,18 @@ public class ProfitInventory extends SimpleContainer {
 
     }
 
-    // remove ability to add items
-//    @Override
-//    public ItemStack addItem(ItemStack itemStack) {
-//        return itemStack;
-//    }
-//
-//    @Override
-//    public void setItem(int slot, ItemStack itemStack) {
-//        if (!itemStack.isEmpty()) {
-//            return;
-//        }
-//
-//        super.setItem(slot, itemStack);
-//
-//    }
 
+    @Override
+    public boolean canPlaceItem(final int slot, final ItemStack itemStack) {
+        return false;
+    }
 
 //    @Override
-//    public void slotChanged(AbstractContainerMenu container, int slotIndex, ItemStack itemStack) {
+//    public boolean canTakeItem(final Container into, final int slot, final ItemStack itemStack) {
 //
+//        CheckProtected cp = CheckProtected.createContainerOpen(this.cp.getPosition().pos(), this.s.getLevel(this.cp.getPosition().dimension()), true);
+//
+//        return false;
 //    }
-//
-//    @Override
-//    public void dataChanged(AbstractContainerMenu container, int id, int value) {
-//
-//    }
+
 }
