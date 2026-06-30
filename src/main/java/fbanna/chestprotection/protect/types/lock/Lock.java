@@ -1,7 +1,7 @@
 package fbanna.chestprotection.protect.types.lock;
 
 import com.mojang.authlib.GameProfile;
-import fbanna.chestprotection.protect.Authorised;
+import fbanna.chestprotection.protect.data.Authorised;
 import fbanna.chestprotection.protect.data.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
 import net.minecraft.ChatFormatting;

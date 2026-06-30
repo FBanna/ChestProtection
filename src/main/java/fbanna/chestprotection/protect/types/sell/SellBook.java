@@ -1,7 +1,7 @@
 package fbanna.chestprotection.protect.types.sell;
 
 import eu.pb4.sgui.api.gui.SimpleGui;
-import fbanna.chestprotection.protect.Authorised;
+import fbanna.chestprotection.protect.data.Authorised;
 import fbanna.chestprotection.protect.data.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
 import fbanna.chestprotection.ui.sellsetup.SellSetupUI;

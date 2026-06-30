@@ -1,16 +1,11 @@
-package fbanna.chestprotection.protect;
+package fbanna.chestprotection.protect.data;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fbanna.chestprotection.ChestProtection;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
-import net.minecraft.world.level.Level;
-import org.apache.logging.log4j.core.util.UuidUtil;
 
 import java.util.*;
 

@@ -2,6 +2,7 @@ package fbanna.chestprotection.protect;
 
 import com.mojang.serialization.DataResult;
 import fbanna.chestprotection.ChestProtection;
+import fbanna.chestprotection.protect.data.Authorised;
 import fbanna.chestprotection.protect.data.CPdata;
 import fbanna.chestprotection.protect.types.*;
 import fbanna.chestprotection.protect.types.Error;

@@ -1,6 +1,6 @@
 package fbanna.chestprotection.protect.types.lock;
 
-import fbanna.chestprotection.protect.Authorised;
+import fbanna.chestprotection.protect.data.Authorised;
 import fbanna.chestprotection.protect.data.CPdata;
 import fbanna.chestprotection.protect.CheckProtected;
 import fbanna.chestprotection.ui.lock.EditAuthorised;
