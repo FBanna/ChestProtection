@@ -36,11 +36,9 @@ public class MixinNeighbourChest {
 
         }
 
-
         if(cp != null && !cp.isClear()) {
             type.set(ChestType.SINGLE);
         }
 
     }
-
 }

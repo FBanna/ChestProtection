@@ -1,5 +1,6 @@
 package fbanna.chestprotection;
 
+import fbanna.chestprotection.config.Config;
 import fbanna.chestprotection.protect.CheckProtected;
 
 import fbanna.chestprotection.protect.types.sell.Sell;
@@ -26,7 +27,10 @@ public class ChestProtection implements ModInitializer {
   public void onInitialize() {
 
     LOGGER.info("Now protecting your chests!");
-    // CHECK FOR BLOCK USE
+
+
+
+    LOGGER.info(String.valueOf(Config.OP_CAN_BREAK));
 
     UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
 
