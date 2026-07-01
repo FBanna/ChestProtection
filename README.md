@@ -1,6 +1,8 @@
+**New 2.X.X versions are incompatible with 1.X.X versions!**
+
 **CHEST PROTECTION**
 
-Just finished rewrite of this mod to allow for new features! These include Authorisation, config file, improved ui, and lots of small tweaks to improve the mod
+Just finished rewriting of this mod to allow for new features! These include Authorisation, config file, improved ui, and lots of small tweaks to improve the mod
 
 Easy to use server side mod for fabric that implements locking chests as well as creating shops within them
 
