@@ -12,7 +12,7 @@ import java.util.Properties;
 
 public class Config {
 
-    public static final boolean OP_CAN_BREAK;
+    public static final boolean OP_CAN_OPEN;
     public static final boolean SPECTATOR_CAN_OPEN;
 
     static {
@@ -28,7 +28,7 @@ public class Config {
             }
         }
 
-        OP_CAN_BREAK = getBoolean(properties, newProperties, "op_can_break", false);
+        OP_CAN_OPEN = getBoolean(properties, newProperties, "op_can_open", false);
         SPECTATOR_CAN_OPEN = getBoolean(properties, newProperties, "spectator_can_open", true);
 
         try (OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -36,6 +36,10 @@ public class Config {
         } catch(IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void init() {
+
     }
 
     private static boolean getBoolean(Properties properties, Properties newProperties, String key, boolean defaultValue) {

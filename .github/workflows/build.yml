@@ -7,7 +7,7 @@ name: build
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+\+1.21.7'
+      - '[0-9]+.[0-9]+.[0-9]+\+26.2'
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
       matrix:
         # Use these Java versions
         java: [
-          21,    # Current Java LTS
+          25,    # Current Java LTS
         ]
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +38,7 @@ jobs:
       - name: build
         run: ./gradlew build
       - name: capture build artifacts
-        if: ${{ matrix.java == '21' }} # Only upload artifacts built from latest java
+        if: ${{ matrix.java == '25' }} # Only upload artifacts built from latest java
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
@@ -64,7 +64,7 @@ jobs:
           tag: ${{ github.ref_name }}
           artifacts: "artifacts/*.jar"
           prerelease: false
-          body: "pre release, do not use"
+          #body: "pre release, do not use"
 
       - name: Modrinth
         uses: Kir-Antipov/mc-publish@v3.3.0

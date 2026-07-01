@@ -17,8 +17,8 @@ import java.util.Optional;
 public class LockBook extends CheckProtected {
 
 
-    public LockBook(ItemStack stack, CPdata cpdata, ProtectedStatus status) {
-        super(stack, cpdata, status);
+    public LockBook(ItemStack stack, CPdata cpdata) {
+        super(stack, cpdata, ProtectedStatus.LOCK);
     }
 
 
@@ -27,15 +27,15 @@ public class LockBook extends CheckProtected {
 
         Authorised authorised = this.cpdata.getAuthorised();
 
-        if(!authorised.isAuthorised(player.getUUID())) {
+        if(!authorised.isAuthorised(player.getUUID()) && !isAlwaysAllowed(player)) {
 
-            Optional<NameAndId> authorProfileOption = server.services().nameToIdCache().get(authorised.getAuthor());
+//            Optional<NameAndId> authorProfileOption = server.services().nameToIdCache().get(authorised.getAuthor());
+//
+//            if (authorProfileOption.isEmpty()) {
+//                return true;
+//            }
 
-            if (authorProfileOption.isEmpty()) {
-                return true;
-            }
-
-            player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorProfileOption.get().name()))
+            player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorised.getAuthorName(server)))
                     .withStyle(ChatFormatting.RED));
 
             return false;

@@ -62,6 +62,19 @@ public class SellSetupUI extends SimpleGui {
             );
         }
 
+        this.setSlot(21, new GuiElementBuilder(Items.OAK_DOOR)
+                .setName(Component.literal("Quit").withStyle(ChatFormatting.GRAY))
+                .setCallback(() -> {
+
+                    boolean isAllowed = this.cp.openProtectedInventory(this.player);
+
+                    if (isAllowed) {
+                        this.close();
+                    }
+                })
+                .hideDefaultTooltip()
+        );
+
         this.setSlot(23, new GuiElementBuilder(Items.PLAYER_HEAD)
                 .setProfileSkinTexture(GUI_QUESTION_MARK)
                 .setName(Component.literal("Edit Authorisation"))
@@ -227,6 +240,7 @@ public class SellSetupUI extends SimpleGui {
                         TypedDataComponent<ItemEnchantments> enchants = (TypedDataComponent<ItemEnchantments>) component;
 
                         if (enchants.value().isEmpty()) {
+                            this.tradeItems[i].stack.remove(DataComponents.ENCHANTMENTS);
                             //ChestProtection.LOGGER.info("skipping empty enchants");
                             continue;
                         }

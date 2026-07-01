@@ -3,6 +3,7 @@ package fbanna.chestprotection.ui.sell;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
+import fbanna.chestprotection.protect.CheckProtected;
 import fbanna.chestprotection.protect.types.sell.Sell;
 import fbanna.chestprotection.protect.data.sell.SellData;
 import fbanna.chestprotection.protect.data.sell.TradeItem;
@@ -36,14 +37,14 @@ public class SellUI extends SimpleGui {
         this.container = new SellInventory(this);
 
 
-        Optional<NameAndId> optionalName = player.level().getServer().services().nameToIdCache().get(this.cp.cpdata.getAuthorised().getAuthor());
+//        Optional<NameAndId> optionalName = player.level().getServer().services().nameToIdCache().get(this.cp.cpdata.getAuthorised().getAuthor());
+//
+//        if (optionalName.isEmpty()) {
+//            ChestProtection.LOGGER.error("Could not find owner's name!");
+//            return;
+//        }
 
-        if (optionalName.isEmpty()) {
-            ChestProtection.LOGGER.error("Could not find owner's name!");
-            return;
-        }
-
-        this.setTitle(Component.literal("%s's shop".formatted(optionalName.get().name())));
+        this.setTitle(Component.literal("%s's shop".formatted(this.cp.cpdata.getAuthorised().getAuthorName(player.level().getServer()))));
 
         for (int i: PANES) {
             this.setSlot(i, new GuiElementBuilder(Items.STAINED_GLASS_PANE.gray())
@@ -67,7 +68,7 @@ public class SellUI extends SimpleGui {
                 .hideDefaultTooltip();
 
 
-        if (this.cp.cpdata.getAuthorised().isAuthorised(player.getUUID())) {
+        if (this.cp.cpdata.getAuthorised().isAuthorised(player.getUUID()) || CheckProtected.isAlwaysAllowed(this.player)) {
 
             this.setSlot(25, new GuiElementBuilder(Items.PAPER)
                     .setName(Component.literal("Edit shop").withStyle(ChatFormatting.GRAY))
@@ -132,9 +133,11 @@ public class SellUI extends SimpleGui {
         // USER ERRORS: no cost
         // ACCEPT
 
-        Optional<NameAndId> ownersNameOptional = player.level().getServer().services().nameToIdCache().get(this.cp.cpdata.getAuthorised().getAuthor());
+//        Optional<NameAndId> ownersNameOptional = player.level().getServer().services().nameToIdCache().get(this.cp.cpdata.getAuthorised().getAuthor());
+//
+        String name = this.cp.cpdata.getAuthorised().getAuthorName(this.player.level().getServer());
 
-        if (ownersNameOptional.isEmpty()) {
+        if (name == null) {
             ChestProtection.LOGGER.error("Could not find owner's name!");
             this.clearSlot(ACCEPT_SLOT);
             return;
@@ -143,7 +146,7 @@ public class SellUI extends SimpleGui {
         if (!TradeInventoryUtils.isPresent(this.cp.getProtectedInventory(), data.getProduct().get())) {
             this.setSlot(ACCEPT_SLOT, new GuiElementBuilder(Items.BARRIER)
                     .setName(
-                            Component.literal("No stock! Contact %s".formatted(ownersNameOptional.get().name()))
+                            Component.literal("No stock! Contact %s".formatted(name))
                                     .withStyle(ChatFormatting.RED)
                     )
             );
@@ -153,7 +156,7 @@ public class SellUI extends SimpleGui {
         if (!this.cp.getProfitInventory().canAddItem(data.getProduct().get().copyStackWithCount())) {
             this.setSlot(ACCEPT_SLOT, new GuiElementBuilder(Items.BARRIER)
                     .setName(
-                            Component.literal("Profit inventory filled! Contact %s".formatted(ownersNameOptional.get().name()))
+                            Component.literal("Profit inventory filled! Contact %s".formatted(name))
                                     .withStyle(ChatFormatting.RED)
                     )
             );

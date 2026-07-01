@@ -36,6 +36,14 @@ public class CPdata {
         return this.authorised;
     }
 
+    public boolean isDataCorrect() {
+
+        if (authorised.getAuthor() == null) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean isSellDataCorrect() {
 
         if (this.sellData.isEmpty()) {

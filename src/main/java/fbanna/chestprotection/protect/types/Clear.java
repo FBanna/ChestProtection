@@ -12,19 +12,10 @@ public class Clear extends CheckProtected {
         super(stack, null, ProtectedStatus.CLEAR);
     }
 
-//    private CheckProtected cp;
-//
-//    public Clear(CheckProtected cp){
-//
-//        this.cp = cp;
-//
-//    }
+
 
     @Override
     public boolean open(Player player, MinecraftServer server) {
-
-        //player.sendSystemMessage(Component.literal("all clear!"));
-
         return true;
     }
 }

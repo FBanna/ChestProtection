@@ -31,11 +31,11 @@ public class Sell extends CheckProtected {
 
     private final ArrayList<ServerPlayer> players = new ArrayList<>();
 
-    public Sell(ItemStack stack, CPdata cpdata, Container protectedInventory, ProtectedStatus status, GlobalPos position) {
+    public Sell(ItemStack stack, CPdata cpdata, Container protectedInventory,  GlobalPos position) {
         this.protectedInventory =  protectedInventory;
         this.position = position;
 
-        super(stack, cpdata, status);
+        super(stack, cpdata, ProtectedStatus.SELL);
         this.GenerateSellCPdata();
 
         NonNullList<ItemStack> out = NonNullList.withSize(PROFIT_INVENTORY_SIZE, ItemStack.EMPTY);
@@ -125,7 +125,7 @@ public class Sell extends CheckProtected {
     }
 
     public SellBook toSellBook() {
-        return new SellBook(this.getStack(), this.cpdata, ProtectedStatus.SELL);
+        return new SellBook(this.getStack(), this.cpdata, this.position);
     }
 
     public void openProtectedInventory(ServerPlayer player) {

@@ -15,8 +15,8 @@ import java.util.Optional;
 
 public class Lock extends CheckProtected {
 
-    public Lock(ItemStack stack, CPdata cpdata, ProtectedStatus status) {
-        super(stack, cpdata, status);
+    public Lock(ItemStack stack, CPdata cpdata) {
+        super(stack, cpdata, ProtectedStatus.LOCK);
     }
 
     @Override
@@ -26,15 +26,15 @@ public class Lock extends CheckProtected {
 
 
 
-        if(!authorised.isAuthorised(player.getUUID())) {
+        if(!authorised.isAuthorised(player.getUUID()) && !isAlwaysAllowed(player)) {
 
-            Optional<GameProfile> authorProfileOption = server.services().profileResolver().fetchById(authorised.getAuthor());
+//            Optional<GameProfile> authorProfileOption = server.services().profileResolver().fetchById(authorised.getAuthor());
+//
+//            if (authorProfileOption.isEmpty()) {
+//                return true;
+//            }
 
-            if (authorProfileOption.isEmpty()) {
-                return true;
-            }
-
-            player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorProfileOption.get().name()))
+            player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorised.getAuthorName(server)))
                 .withStyle(ChatFormatting.RED));
 
             return false;
@@ -43,37 +43,5 @@ public class Lock extends CheckProtected {
 
         return true;
     }
-
-
-
-//    /// Funtion to open screen to edit Authorised players
-//    public static void editAuthorised(Player player, CPdata cpdata, MinecraftServer server) {
-//
-//        Authorised authorised = cpdata.getAuthorised();
-//
-//
-//        if (!authorised.isAuthorised(player.getUUID())) {
-//
-//            Optional<NameAndId> authorProfileOption = server.services().nameToIdCache().get(authorised.getAuthor());
-//
-//            if (authorProfileOption.isEmpty()) {
-//                return;
-//            }
-//
-//            player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorProfileOption.get().name()))
-//                .withStyle(ChatFormatting.RED));
-//
-//            return;
-//        }
-//
-//
-//
-//        EditAuthorised gui = new EditAuthorised((ServerPlayer) player, cpdata);
-//        gui.open();
-//
-//
-//
-//    }
-
 
 }

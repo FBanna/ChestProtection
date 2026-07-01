@@ -11,8 +11,8 @@ import net.minecraft.world.item.ItemStack;
 public class Error extends CheckProtected {
 
 
-    public Error(ItemStack stack, CPdata cpdata, ProtectedStatus status) {
-        super(stack, cpdata, status);
+    public Error(ItemStack stack, CPdata cpdata) {
+        super(stack, cpdata, ProtectedStatus.ERROR);
     }
 
     @Override

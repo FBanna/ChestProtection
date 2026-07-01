@@ -2,6 +2,7 @@ package fbanna.chestprotection.protect;
 
 import com.mojang.serialization.DataResult;
 import fbanna.chestprotection.ChestProtection;
+import fbanna.chestprotection.config.Config;
 import fbanna.chestprotection.protect.data.Authorised;
 import fbanna.chestprotection.protect.data.CPdata;
 import fbanna.chestprotection.protect.types.*;
@@ -24,6 +25,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -32,6 +34,7 @@ import net.minecraft.world.item.WrittenBookItem;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.component.WrittenBookContent;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -82,17 +85,15 @@ public abstract class CheckProtected {
         }
 
 
-        Optional<NameAndId> authorProfileOption = server.services().nameToIdCache().get(authorised.getAuthor());
+//        Optional<NameAndId> authorProfileOption = server.services().nameToIdCache().get(authorised.getAuthor());
+//
+//
+//        if (authorProfileOption.isEmpty()) {
+//            return true;
+//        }
 
-
-        if (authorProfileOption.isEmpty()) {
-            return true;
-        }
-
-        player
-                .sendOverlayMessage(
-                        Component.literal("Locked by %s!".formatted(authorProfileOption.get().name())
-                        ).withStyle(ChatFormatting.RED));
+        player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorised.getAuthorName(server)))
+                .withStyle(ChatFormatting.RED));
 
         return false;
 
@@ -116,18 +117,24 @@ public abstract class CheckProtected {
             return new Clear(stack);
         }
 
-        CPdata cpdata = getCPdataOrGenerate(stack, level);
+        Optional<CPdata> optionalCPdata = getCPdataOrGenerate(stack, level);
+
+        if(optionalCPdata.isEmpty()) {
+            return new Clear(stack);
+        }
+
+        CPdata cpdata = optionalCPdata.get();
 
         switch (status) {
             case ERROR -> {
-                return new Error(stack, cpdata, status);
+                return new Error(stack, cpdata);
             }
             case LOCK -> {
-                return new LockBook(stack, cpdata, status);
+                return new LockBook(stack, cpdata);
             }
             case SELL -> {
 
-                return new SellBook(stack, cpdata, status);
+                return new SellBook(stack, cpdata);
 
             }
         }
@@ -144,7 +151,6 @@ public abstract class CheckProtected {
 
         Container tempProtectedInventory = null;
         ItemStack tempStack = null;
-        CPdata tempCPdata = null;
         GlobalPos correctedPosition;
 
 
@@ -207,20 +213,29 @@ public abstract class CheckProtected {
         // Check if Sell aready exists for object
 
         if (OPEN_SHOPS.containsKey(correctedPosition) && !ignoreExisting) {
-            ChestProtection.LOGGER.info("found pre-existing shop!");
+            //ChestProtection.LOGGER.info("found pre-existing shop!");
             return OPEN_SHOPS.get(correctedPosition);
         }
 
         // Creating Authorisation
 
-        tempCPdata = getCPdataOrGenerate(tempStack, level);
+        //tempCPdata = getCPdataOrGenerate(tempStack, level);
+
+        Optional<CPdata> optionalCPdata = getCPdataOrGenerate(tempStack, level);
+
+        if(optionalCPdata.isEmpty()) {
+            return new Clear(tempStack);
+        }
+
+        CPdata cpdata = optionalCPdata.get();
+
 
 
         return switch (status) {
             case CLEAR -> new Clear(tempStack);
-            case ERROR -> new Error(tempStack, tempCPdata, status);
-            case LOCK -> new Lock(tempStack, tempCPdata, status);
-            case SELL -> new Sell(tempStack, tempCPdata, tempProtectedInventory, status, correctedPosition);
+            case ERROR -> new Error(tempStack, cpdata);
+            case LOCK -> new Lock(tempStack, cpdata);
+            case SELL -> new Sell(tempStack, cpdata, tempProtectedInventory, correctedPosition);
             //case SELL_ERROR -> new SellError(tempStack, tempCPdata, status);
         };
 
@@ -273,7 +288,7 @@ public abstract class CheckProtected {
     /// Must ensure that the book is NOT clear
     ///
     /// returns the CPdata or generates and saves it itself
-    private static CPdata getCPdataOrGenerate(ItemStack stack, Level level) {
+    private static Optional<CPdata> getCPdataOrGenerate(ItemStack stack, Level level) {
         CPdata cpdata = getCPdata(stack);
 
         if (cpdata == null) {
@@ -284,11 +299,15 @@ public abstract class CheckProtected {
                     Optional.empty()
             );
 
+            if (!newData.isDataCorrect()) {
+                return Optional.empty();
+            }
+
             writeCPdata(newData, stack);
-            return newData;
+            return Optional.of(newData);
 
         } else {
-            return cpdata;
+            return Optional.of(cpdata);
         }
 
 
@@ -338,6 +357,7 @@ public abstract class CheckProtected {
 
     private static void writeCPdata(CPdata newData, ItemStack stack) {
 
+
         stack.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, comp -> comp.update(currentNbt -> {
 
             DataResult<Tag> tag = CPdata.CODEC.encodeStart(NbtOps.INSTANCE, newData);
@@ -374,6 +394,21 @@ public abstract class CheckProtected {
 
     public boolean isShop() {
         return (this.status == ProtectedStatus.SELL);
+    }
+
+    public static boolean isAlwaysAllowed(Player player) {
+
+
+        if (player.level().getServer().getPlayerList().isOp(player.nameAndId()) && Config.OP_CAN_OPEN) {
+            return true;
+        }
+
+        if(player.gameMode() == GameType.SPECTATOR && Config.SPECTATOR_CAN_OPEN) {
+            return true;
+        }
+
+        return false;
+
     }
 
 }

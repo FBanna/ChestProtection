@@ -6,6 +6,7 @@ import fbanna.chestprotection.ChestProtection;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -82,6 +83,17 @@ public class Authorised {
 
     public void removeAuthorised(UUID player){
         this.authorised.remove(player);
+    }
+
+    @Nullable
+    public String getAuthorName(MinecraftServer server){
+        Optional<NameAndId> nameAndId = server.services().nameToIdCache().get(this.author);
+
+        if(nameAndId.isPresent()){
+            return nameAndId.get().name();
+        }
+
+        return null;
     }
 
     @Override
