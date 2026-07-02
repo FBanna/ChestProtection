@@ -340,7 +340,6 @@ public class SellSetupUI extends SimpleGui {
 
     @Override
     public void onRemoved() {
-        ChestProtection.LOGGER.info("closing setup ui");
         if (!this.isCountMenu) {
 
             this.container.dropAll(this.player);
