@@ -43,13 +43,17 @@ public class Config {
     }
 
     private static boolean getBoolean(Properties properties, Properties newProperties, String key, boolean defaultValue) {
-        try {
-            final boolean value = Boolean.parseBoolean(properties.getProperty(key));
-            newProperties.setProperty(key, Boolean.toString(value));
-            return value;
-        } catch(NumberFormatException e) {
+
+        String propertyString = properties.getProperty(key);
+
+        if (propertyString == null) {
             newProperties.setProperty(key, Boolean.toString(defaultValue));
             return defaultValue;
         }
+
+        final boolean value = Boolean.parseBoolean(propertyString);
+        newProperties.setProperty(key, Boolean.toString(value));
+        return value;
+
     }
 }
