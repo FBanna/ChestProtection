@@ -2,6 +2,7 @@ package fbanna.chestprotection.ui.sellsetup;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.AnvilInputGui;
+import fbanna.chestprotection.ChestProtection;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,11 +15,14 @@ public class SellSetupCountUI extends AnvilInputGui {
 
     private final int tradeItemSlot;
 
+    private boolean closed;
+
     public SellSetupCountUI(ServerPlayer player, SellSetupUI setupParent, int tradeItem) {
         this.setupParent = setupParent;
         super(player, false);
 
         this.tradeItemSlot = tradeItem;
+        this.closed = false;
 
         this.setSlot(1, this.setupParent.getTradeItem(this.tradeItemSlot).stack.copyWithCount(1));
 
@@ -56,7 +60,6 @@ public class SellSetupCountUI extends AnvilInputGui {
                     .setCallback(() -> {
 
                         this.setupParent.setCount(this.tradeItemSlot, Integer.parseInt(input));
-
                         this.close();
                     })
             );
@@ -71,9 +74,17 @@ public class SellSetupCountUI extends AnvilInputGui {
     }
 
     @Override
-    public void close() {
-        super.close();
-        this.setupParent.open();
+    public void afterRemoval() {
+        //ChestProtection.LOGGER.info("this is closed, trying to reopen");
+        if(!this.closed) {
+            this.closed = true;
+            this.setupParent.beforeReopen();
+            this.setupParent.open();
+
+        }
+
+        super.afterRemoval();
+
     }
 
 

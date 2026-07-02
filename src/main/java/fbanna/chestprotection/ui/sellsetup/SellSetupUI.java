@@ -303,22 +303,14 @@ public class SellSetupUI extends SimpleGui {
 
     public void setCount(int slot, int count){
         this.tradeItems[slot].count = count;
-        this.isCountMenu = false;
-
         this.updateUI();
     }
 
+    public void beforeReopen() {
+        this.isCountMenu = false;
+        this.updateUI();
+    }
 
-
-//    protected void setTradeItem(int slot, ItemStack stack){
-//
-//        this.tradeItems[slot].stack = stack.copy();
-//        this.tradeItems[slot].count = stack.count();
-//
-//        this.updateUI();
-//
-//
-//    }
 
     protected void setTradeItems(NonNullList<ItemStack> items) {
         int i = 0;
