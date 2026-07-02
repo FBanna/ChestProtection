@@ -2,6 +2,7 @@ package fbanna.chestprotection.ui.sellsetup;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.types.sell.SellBook;
 import fbanna.chestprotection.protect.data.sell.TradeItem;
 import fbanna.chestprotection.ui.lock.EditAuthorised;
@@ -336,8 +337,10 @@ public class SellSetupUI extends SimpleGui {
 
     }
 
+
     @Override
     public void onRemoved() {
+        ChestProtection.LOGGER.info("closing setup ui");
         if (!this.isCountMenu) {
 
             this.container.dropAll(this.player);

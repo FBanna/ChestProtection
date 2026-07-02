@@ -28,8 +28,6 @@ public class SellSetupCountUI extends AnvilInputGui {
 
         this.setDefaultInputValue(String.valueOf(this.setupParent.getTradeItem(this.tradeItemSlot).count));
 
-
-        //this.setSlot(1, );
     }
 
 
@@ -66,17 +64,26 @@ public class SellSetupCountUI extends AnvilInputGui {
 
 
         }
-        //this.searchedName = input;
 
-        //updateSearchedPlayer(input);
+    }
 
+
+    // Added to prevent item loss for geyser accounts
+    @Override
+    public void onTick() {
+
+        if (this.closed){
+            this.setupParent.close();
+            this.close();
+        }
 
     }
 
     @Override
     public void afterRemoval() {
-        //ChestProtection.LOGGER.info("this is closed, trying to reopen");
+
         if(!this.closed) {
+
             this.closed = true;
             this.setupParent.beforeReopen();
             this.setupParent.open();
