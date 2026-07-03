@@ -3,20 +3,22 @@ package fbanna.chestprotection.ui.lock;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
-import com.mojang.authlib.yggdrasil.response.NameAndId;
+
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.AnvilInputGui;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import fbanna.chestprotection.ChestProtection;
 import fbanna.chestprotection.protect.CheckProtected;
+import fbanna.chestprotection.protect.data.Authorised;
 import fbanna.chestprotection.util.CustomProfileRepository;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -76,27 +78,33 @@ public class EditAuthorised extends AnvilInputGui {
 
 
 
-        ArrayList<GameProfile> players = new ArrayList<>();
+        ArrayList<NameAndId> players = new ArrayList<>();
 
         if (showAuthorised) {
             ArrayList<UUID> playersUUID = this.cp.cpdata.getAuthorised().getAuthorised();
 
             for (UUID id: playersUUID) {
 
-                Optional<GameProfile> optionalGameProfile = this.server.services().profileResolver().fetchById(id);
+                //this.server.services().profileResolver().
 
-                if (optionalGameProfile.isEmpty()) {
+                NameAndId result = Authorised.getNameAndId(this.server, id);
+
+                //ProfileResult result = this.server.services().sessionService().fetchProfile(id, true);
+
+                //Optional<NameAndId> optionalNameAndId = this.server.services().nameToIdCache().get(id);
+
+                if (result == null) {
                     ChestProtection.LOGGER.info("Could not find a player!");
                     continue;
                 }
 
-                players.add(optionalGameProfile.get());
+                players.add(result);
 
             }
         } else {
 
             for(ServerPlayer player: this.server.getPlayerList().getPlayers()) {
-                players.add(player.getGameProfile());
+                players.add(player.nameAndId());
             }
 
         }
@@ -207,7 +215,7 @@ public class EditAuthorised extends AnvilInputGui {
                 break;
             }
 
-            GameProfile player = players.get(playerNum);
+            NameAndId player = players.get(playerNum);
 
             //ChestProtection.LOGGER.info("player index: " + String.valueOf(playerNum));
 
@@ -230,13 +238,13 @@ public class EditAuthorised extends AnvilInputGui {
 
     }
 
-    private void playerAuthoriseScreen(GameProfile selectedPlayer) {
+    private void playerAuthoriseScreen(NameAndId selectedPlayer) {
 
         class playerAuthoriseScreen extends SimpleGui {
 
             private final EditAuthorised oldGui;
 
-            public playerAuthoriseScreen(ServerPlayer player, EditAuthorised oldGui, GameProfile selectedPlayer, CheckProtected cp) {
+            public playerAuthoriseScreen(ServerPlayer player, EditAuthorised oldGui, NameAndId selectedPlayer, CheckProtected cp) {
                 this.oldGui = oldGui;
                 oldGui.close();
                 super(MenuType.HOPPER, player, false);
@@ -263,7 +271,7 @@ public class EditAuthorised extends AnvilInputGui {
                 );
             }
 
-            private void updateAuthorisedWool(GameProfile player) {
+            private void updateAuthorisedWool(NameAndId player) {
 
 
                 if (cp.cpdata.getAuthorised().isAuthor(player.id())) {
@@ -423,7 +431,7 @@ public class EditAuthorised extends AnvilInputGui {
 
                 } else {
 
-                    NameAndId profile = potentialProfile.get();
+                    NameAndId profile = new NameAndId(potentialProfile.get());
 
 
                     this.setSlot(1, new GuiElementBuilder(Items.PLAYER_HEAD)

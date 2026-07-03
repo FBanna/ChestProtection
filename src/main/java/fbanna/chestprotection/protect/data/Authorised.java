@@ -1,5 +1,6 @@
 package fbanna.chestprotection.protect.data;
 
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fbanna.chestprotection.ChestProtection;
@@ -86,15 +87,41 @@ public class Authorised {
     }
 
     @Nullable
-    public String getAuthorName(MinecraftServer server){
-        Optional<NameAndId> nameAndId = server.services().nameToIdCache().get(this.author);
+    public NameAndId getAuthorNameAndId(MinecraftServer server){
+        return getNameAndId(server, this.author);
 
-        if(nameAndId.isPresent()){
-            return nameAndId.get().name();
+    }
+
+
+
+    @Nullable
+    public String getAuthorName(MinecraftServer server) {
+        NameAndId nameAndId = getAuthorNameAndId(server);
+
+        if (nameAndId == null) {
+            return null;
         }
 
-        return null;
+        return nameAndId.name();
     }
+
+    @Nullable
+    public static NameAndId getNameAndId(MinecraftServer server, UUID id) {
+        Optional<NameAndId> nameAndId = server.services().nameToIdCache().get(id);
+
+        if(nameAndId.isPresent()){
+            return nameAndId.get();
+        } else {
+            ProfileResult result = server.services().sessionService().fetchProfile(id, true);
+
+            if (result == null) {
+                return null;
+            }
+            return (new NameAndId(result.profile()));
+        }
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
