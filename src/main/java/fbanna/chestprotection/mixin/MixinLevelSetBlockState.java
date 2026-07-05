@@ -25,13 +25,8 @@ public class MixinLevelSetBlockState {
     @Inject(method = "setBlockState", at = @At(value = "HEAD"), cancellable = true)
     private void setBlockState(BlockPos pos, BlockState state, int flags, CallbackInfoReturnable<BlockState> cir) {
 
-//        if (!state.hasBlockEntity()) {
-//            return;
-//        }
-
+        //if (state.getBlock() == Blocks.CHEST)
         CheckProtected cp = CheckProtected.createContainerOpen(pos, this.level);
-
-        //ChestProtection.LOGGER.info("yup were doing this");
 
         if (!cp.isClear()){
             cir.cancel();

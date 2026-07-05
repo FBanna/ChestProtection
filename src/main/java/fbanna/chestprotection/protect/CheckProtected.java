@@ -257,9 +257,16 @@ public abstract class CheckProtected {
 
         String title = book.title().raw();
 
+
+
         return switch (title) {
             case LOCKED_TITLE -> ProtectedStatus.LOCK;
-            case SELL_TITLE -> ProtectedStatus.SELL;
+            case SELL_TITLE -> {
+                if (book.generation() != 0) {
+                    yield ProtectedStatus.CLEAR;
+                }
+                yield ProtectedStatus.SELL;
+            }
             default -> ProtectedStatus.CLEAR;
         };
 
