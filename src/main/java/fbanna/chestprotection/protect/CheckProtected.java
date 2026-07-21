@@ -184,8 +184,10 @@ public abstract class CheckProtected {
 
 
             if (ChestBlock.getBlockType(state) == DoubleBlockCombiner.BlockType.SECOND) {
+
                 correctedPosition = GlobalPos.of(level.dimension(), ChestBlock.getConnectedBlockPos(position, state));
             } else {
+
                 correctedPosition = GlobalPos.of(level.dimension(), position);
             }
 
