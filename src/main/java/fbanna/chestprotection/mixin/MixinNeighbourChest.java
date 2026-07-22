@@ -19,7 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChestBlock.class)
 public class MixinNeighbourChest {
 
-    @Inject(method = "getStateForPlacement", at = @At(value = "INVOKE", target = "defaultBlockState", shift = At.Shift.BEFORE))
+    @Inject(method = "getStateForPlacement", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/ChestBlock;defaultBlockState()Lnet/minecraft/world/level/block/state/BlockState;", shift = At.Shift.BEFORE))
+    //@Inject(method = "getStateForPlacement", at = @At(value = "TAIL"))
     private void inject(final BlockPlaceContext context, CallbackInfoReturnable<BlockState> cir, @Local(name = "facingDirection") Direction facingDirection, @Local(name = "type") LocalRef<ChestType> type) {
 
         CheckProtected cp = null;

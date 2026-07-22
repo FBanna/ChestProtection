@@ -79,9 +79,9 @@ public abstract class CheckProtected {
 
         Authorised authorised = this.cpdata.getAuthorised();
 
-        if (authorised.isAuthorised(player.getUUID())) {
-            return true;
-        }
+//        if (authorised.isAuthorised(player.getUUID())) {
+//            return true;
+//        }
 
         player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorised.getAuthorName(server)))
                 .withStyle(ChatFormatting.RED));

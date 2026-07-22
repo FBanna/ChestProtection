@@ -53,9 +53,7 @@ public class ChestProtection implements ModInitializer {
 
     PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
 
-      boolean result = CheckProtected.createContainerOpen(pos, world).playerBreak(player, world.getServer());
-
-      return result;
+        return CheckProtected.createContainerOpen(pos, world).playerBreak(player, world.getServer());
 
     });
 
