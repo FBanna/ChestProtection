@@ -43,6 +43,7 @@ import net.minecraft.world.level.block.DoubleBlockCombiner;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import static fbanna.chestprotection.ChestProtection.LOCKED_BLOCKS;
 import static fbanna.chestprotection.ChestProtection.OPEN_SHOPS;
 
 public abstract class CheckProtected {
@@ -55,14 +56,12 @@ public abstract class CheckProtected {
         ERROR,
         LOCK,
         SELL
-//        SELL_ERROR
     }
 
 
     public CPdata cpdata;
 
     private final ItemStack stack;
-    //private Container protectedInventory;
     private final ProtectedStatus status;
 
 
@@ -83,14 +82,6 @@ public abstract class CheckProtected {
         if (authorised.isAuthorised(player.getUUID())) {
             return true;
         }
-
-
-//        Optional<NameAndId> authorProfileOption = server.services().nameToIdCache().get(authorised.getAuthor());
-//
-//
-//        if (authorProfileOption.isEmpty()) {
-//            return true;
-//        }
 
         player.sendOverlayMessage(Component.literal("Locked by %s!".formatted(authorised.getAuthorName(server)))
                 .withStyle(ChatFormatting.RED));
@@ -145,7 +136,20 @@ public abstract class CheckProtected {
         return createContainerOpen(position, level, false);
     }
 
+//    protected static CheckProtected createContainerOpenFromState(BlockState state) {
+//        Container tempprotectedInventory;
+//        ItemStack tempStack = null;
+//        GlobalPos correctedPosition;
+//
+//        if(!state.hasBlockEntity()){
+//            return new Clear(tempStack);
+//        }
+//
+//        BlockEntity entity = (BlockEntity) state;
+//
+//    }
 
+    // could clean this code up a bit
     protected static CheckProtected createContainerOpen(BlockPos position, Level level, boolean ignoreExisting) {
 
 
@@ -163,23 +167,18 @@ public abstract class CheckProtected {
 
 
         BlockEntity entity = level.getBlockEntity(position);
-
-
         Block block = state.getBlock();
-
-
 
         if (!(entity instanceof Container)) {
 
             return new Clear(tempStack);
         }
 
-        if (block != Blocks.CHEST && block != Blocks.BARREL) {
-
+        if (!LOCKED_BLOCKS.contains(block)) {
             return new Clear(tempStack);
         }
 
-
+        // Check for double chest
         if (block == Blocks.CHEST) {
 
 
@@ -212,7 +211,7 @@ public abstract class CheckProtected {
             return new Clear(tempStack);
         }
 
-        // Check if Sell aready exists for object
+        // Check if Sell aready exists for object FIX THIS
 
         if (OPEN_SHOPS.containsKey(correctedPosition) && !ignoreExisting) {
             //ChestProtection.LOGGER.info("found pre-existing shop!");

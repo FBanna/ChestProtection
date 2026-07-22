@@ -10,16 +10,24 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ChestProtection implements ModInitializer {
   public static final Logger LOGGER = LoggerFactory.getLogger("ChestProtection");
 
   public static HashMap<GlobalPos, Sell> OPEN_SHOPS = new HashMap<>();
 
+  public static final Set<Block> LOCKED_BLOCKS = new HashSet<>(Set.of(
+          Blocks.CHEST,
+          Blocks.BARREL
+  ));
 
   @Override
   public void onInitialize() {

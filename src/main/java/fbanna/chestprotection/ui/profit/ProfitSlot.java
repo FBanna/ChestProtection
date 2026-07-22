@@ -16,4 +16,6 @@ public class ProfitSlot extends Slot {
     public boolean mayPlace(@NonNull ItemStack itemStack) {
         return false;
     }
+
+
 }

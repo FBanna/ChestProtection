@@ -27,6 +27,14 @@ public class MixinLevelSetBlockState {
 
         //if (state.getBlock() == Blocks.CHEST)
         CheckProtected cp = CheckProtected.createContainerOpen(pos, this.level);
+//
+//        if (cp.isClear()) {
+//            return;
+//        }
+//
+//        state.hasBlockEntity()
+//
+//        CheckProtected cp = CheckProtected.createContainerOpen()
 
         if (!cp.isClear()){
             cir.cancel();
