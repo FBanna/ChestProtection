@@ -1,10 +1,9 @@
 package fbanna.chestprotection.ui.lock;
 
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.GameProfileRepository;
 
-import com.mojang.authlib.yggdrasil.ProfileResult;
+import com.mojang.authlib.services.ProfileResult;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.AnvilInputGui;
 import eu.pb4.sgui.api.gui.SimpleGui;

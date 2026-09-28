@@ -1,6 +1,6 @@
 package fbanna.chestprotection.protect.data;
 
-import com.mojang.authlib.yggdrasil.ProfileResult;
+import com.mojang.authlib.services.ProfileResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fbanna.chestprotection.ChestProtection;
@@ -112,6 +112,7 @@ public class Authorised {
         if(nameAndId.isPresent()){
             return nameAndId.get();
         } else {
+
             ProfileResult result = server.services().sessionService().fetchProfile(id, true);
 
             if (result == null) {
